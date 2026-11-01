@@ -52,8 +52,13 @@ export function matchAcceptLanguage(header: string | null): Locale {
     .filter(({ tag, q }) => tag && !Number.isNaN(q) && q > 0)
     .sort((a, b) => b.q - a.q);
 
+  let prefersTraditionalChinese = false;
   for (const { tag } of ranked) {
-    if (TRADITIONAL_CHINESE.test(tag)) continue;
+    if (TRADITIONAL_CHINESE.test(tag)) {
+      prefersTraditionalChinese = true;
+      continue;
+    }
+    if (tag === "zh" && prefersTraditionalChinese) continue;
     const base = tag.split("-")[0];
     if (isLocale(base)) return base;
   }
