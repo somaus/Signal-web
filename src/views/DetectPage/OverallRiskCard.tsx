@@ -33,7 +33,11 @@ export default function OverallRiskCard({ result }: OverallRiskCardProps) {
       {result.deepfakeBand ? (
         <BandScale band={result.deepfakeBand} />
       ) : (
-        <div className="relative flex h-40 w-40 items-center justify-center">
+        <div
+          role="img"
+          aria-label={t.overallScoreLabel(result.overallScore)}
+          className="relative flex h-40 w-40 items-center justify-center"
+        >
           <RiskScoreGauge
             score={result.overallScore ?? 0}
             size={160}
