@@ -13,7 +13,7 @@ export interface DetectResult {
   deepfakeTone?: DeepfakeVerdict;
   deepfakeBand: DeepfakeBand | null;
   deepfakeCaption: string;
-  overallScore: number;
+  overallScore: number | null;
   overallCaption: string;
   modelConfidence: number;
   modelConfidenceNote: string;

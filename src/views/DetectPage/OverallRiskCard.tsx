@@ -33,15 +33,21 @@ export default function OverallRiskCard({ result }: OverallRiskCardProps) {
       {result.deepfakeBand ? (
         <BandScale band={result.deepfakeBand} />
       ) : (
-        <div className="relative flex h-40 w-40 items-center justify-center">
+        <div
+          role="img"
+          aria-label={t.overallScoreLabel(result.overallScore)}
+          className="relative flex h-40 w-40 items-center justify-center"
+        >
           <RiskScoreGauge
-            score={result.overallScore}
+            score={result.overallScore ?? 0}
             size={160}
             level={result.deepfakeTone ? toneToLevel[result.deepfakeTone] : undefined}
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-h1 font-bold text-black">{result.overallScore}</p>
-            <p className="text-h3 font-semibold text-gray-500">/100</p>
+            <p className="text-h1 font-bold text-black">{result.overallScore ?? "-"}</p>
+            {result.overallScore !== null && (
+              <p className="text-h3 font-semibold text-gray-500">/100</p>
+            )}
           </div>
         </div>
       )}
