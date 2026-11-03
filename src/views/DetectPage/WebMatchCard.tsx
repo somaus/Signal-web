@@ -42,8 +42,8 @@ export default function WebMatchCard({ webSearch, off, pending }: WebMatchCardPr
       ) : (
         <>
           <ul className="flex flex-col gap-2">
-            {visible.map((match) => (
-              <li key={match.pageUrl}>
+            {visible.map((match, index) => (
+              <li key={`${index}-${match.pageUrl}`}>
                 <a
                   href={match.pageUrl}
                   target="_blank"
