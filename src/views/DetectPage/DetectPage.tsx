@@ -16,6 +16,7 @@ import {
   isDeepfakeBand,
   type DeepfakeBand,
   type DeepfakeDetectionResponse,
+  type DeepfakeVerdict,
 } from "./detectApi";
 import DetectResultSection from "./DetectResultSection";
 import DetectUploadCard from "./DetectUploadCard";
@@ -23,6 +24,23 @@ import { MOCK_RESULT } from "./mockResult";
 import type { DetectResult, DetectStatus } from "./types";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { detectMessages } from "./messages";
+import { getWebSearchOutcome, raiseBand, type WebSearchOutcome } from "./webSearchOutcome";
+
+const verdictBand: Record<DeepfakeVerdict, DeepfakeBand> = {
+  REAL: "LOW",
+  SUSPICIOUS: "UNCERTAIN",
+  FAKE: "HIGH",
+};
+
+const overallWebNoteKey: Record<WebSearchOutcome, keyof DetectText["overallWebNote"]> = {
+  IDLE: "NOT_APPLIED",
+  SEARCHING: "NOT_APPLIED",
+  UNAVAILABLE: "NOT_APPLIED",
+  FAILED: "NOT_APPLIED",
+  FOUND: "RAISED",
+  SIMILAR_ONLY: "SIMILAR_ONLY",
+  NONE: "NONE",
+};
 
 function formatEvidenceType(type: string, labels: Record<string, string>): string {
   if (labels[type]) return labels[type];
@@ -76,6 +94,8 @@ function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectRes
   const confidencePercent = Math.round((data.confidence ?? 0) * 100);
   const riskScore = data.riskScore ?? null;
   const caption = band ? bandCaption(data, band, t) : t.verdictCaption[verdict];
+  const webOutcome = getWebSearchOutcome(data.webSearch);
+  const overallBand = webOutcome === "FOUND" ? raiseBand(band ?? verdictBand[verdict]) : band;
 
   return {
     ...MOCK_RESULT,
@@ -86,6 +106,8 @@ function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectRes
     deepfakeCaption: caption,
     overallScore: riskScore,
     overallCaption: caption,
+    overallBand,
+    overallWebNote: t.overallWebNote[overallWebNoteKey[webOutcome]],
     modelConfidence: confidencePercent,
     modelConfidenceNote: data.fallbackUsed ? t.fallbackNote : t.modelNote,
     fallbackUsed: data.fallbackUsed ?? false,

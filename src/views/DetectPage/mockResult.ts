@@ -11,6 +11,8 @@ export const MOCK_RESULT: DetectResult = {
   deepfakeCaption: "얼굴 영역에서 합성 흔적이 감지되었습니다.",
   overallScore: 74,
   overallCaption: "얼굴 도용 및 딥페이크 악용 위험이 높습니다.",
+  overallBand: null,
+  overallWebNote: "웹 검색 결과는 반영되지 않았습니다.",
   modelConfidence: 91,
   modelConfidenceNote: "현재 입력에서 비교적 안정적으로 판단했습니다.",
   fallbackUsed: false,

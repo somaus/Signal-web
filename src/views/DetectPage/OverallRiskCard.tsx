@@ -21,7 +21,8 @@ interface OverallRiskCardProps {
 }
 
 export default function OverallRiskCard({ result }: OverallRiskCardProps) {
-  const t = useT(detectMessages).result;
+  const messages = useT(detectMessages);
+  const t = messages.result;
   return (
     <div className="flex w-full flex-col items-center gap-4 rounded-lg border border-gray-300 p-5 md:p-6 lg:w-[424px]">
       <div className="flex items-center gap-1">
@@ -30,8 +31,8 @@ export default function OverallRiskCard({ result }: OverallRiskCardProps) {
           <Warning />
         </span>
       </div>
-      {result.deepfakeBand ? (
-        <BandScale band={result.deepfakeBand} />
+      {result.overallBand ? (
+        <BandScale band={result.overallBand} label={messages.overallLevel[result.overallBand]} />
       ) : (
         <div
           role="img"
@@ -52,6 +53,7 @@ export default function OverallRiskCard({ result }: OverallRiskCardProps) {
         </div>
       )}
       <p className="text-body-2 text-center text-gray-800">{result.overallCaption}</p>
+      <p className="text-small text-gray-650 text-center break-keep">{result.overallWebNote}</p>
       {result.deepfakeBand ? (
         result.fallbackUsed && (
           <>

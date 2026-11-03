@@ -15,6 +15,8 @@ export interface DetectResult {
   deepfakeCaption: string;
   overallScore: number | null;
   overallCaption: string;
+  overallBand: DeepfakeBand | null;
+  overallWebNote: string;
   modelConfidence: number;
   modelConfidenceNote: string;
   fallbackUsed: boolean;
