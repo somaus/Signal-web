@@ -33,9 +33,7 @@ export async function shareAnalysisResult(result: AnalysisResult) {
     return;
   }
   try {
-    await navigator.clipboard.writeText(`${text}
-
-${SITE_URL}`);
+    await navigator.clipboard.writeText(`${text}\n\n${SITE_URL}`);
     toast.success(t.copied);
   } catch {
     toast.error(t.copyFailed);
