@@ -114,7 +114,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
       {
         heading: "웹 역이미지 검색",
         description:
-          "딥페이크 탐지 결과에서 '웹에서 찾아보기'에 동의한 경우와 유포 모니터링을 시작한 경우, 같은 이미지가 올라온 웹 페이지를 찾기 위해 사진이 외부 검색 서비스로 전송됩니다. 탐지 결과의 검색은 SerpApi(미국)를 통해 Google 검색으로, 유포 모니터링은 Google Cloud Vision(미국)으로 전송되며, 모니터링은 중지할 때까지 하루 한 번 다시 검색합니다. 검색으로 찾은 웹 페이지 주소와 제목은 서비스에 저장하며, 탐지 결과의 검색 기록은 30일이 지나면 삭제합니다. 외부 서비스로 전송된 사진은 각 서비스의 개인정보처리방침에 따라 처리됩니다.",
+          "딥페이크 탐지 결과에서 '동의하고 웹에서 찾아보기'를 누르거나 '동의하고 모니터링 시작'을 누른 경우, 같은 이미지가 실린 웹 페이지를 찾기 위해 사진이 국외의 검색 서비스로 전송됩니다. 탐지 결과의 검색은 SerpApi, LLC(미국, serpapi.com)를 거쳐 Google 검색으로 전송되며, 버튼을 누를 때 한 번, 서비스가 사진을 추측할 수 없는 임시 주소로 최대 5분 동안 열어 SerpApi가 가져가게 하고 검색이 끝나면 주소를 바로 닫습니다. 유포 모니터링은 Google LLC(미국, cloud.google.com)의 Google Cloud Vision으로, 시작할 때와 이후 중지할 때까지 하루 한 번 사진을 암호화된 연결(HTTPS)로 직접 전송합니다. 서비스는 검색으로 찾은 웹 페이지 주소와 제목을 저장하며, 탐지 결과의 검색 기록은 30일이 지나면 삭제합니다. 받는 자가 사진을 보유·이용하는 기간은 각 사의 개인정보처리방침을 따릅니다. 버튼을 누르지 않으면 사진은 전송되지 않으며, 이 경우 웹 검색 결과 없이 탐지 결과만 제공됩니다.",
       },
       {
         heading: "전문 기관 연결",
@@ -212,7 +212,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "Reverse image search on the web",
           description:
-            "If you agree to 'Search the web' on a deepfake detection result, or start spread monitoring, your photo is sent to an external search service to find web pages where the same image appears. Detection-result searches are sent to Google Search through SerpApi (United States), and spread monitoring is sent to Google Cloud Vision (United States); monitoring searches again once a day until you stop it. We store the addresses and titles of the web pages found, and delete detection-result search records after 30 days. Photos sent to external services are handled under each service's privacy policy.",
+            "If you press 'Agree and search the web' on a deepfake detection result or 'Agree and start monitoring', your photo is sent to a search service outside Korea to find web pages where the same image appears. Detection-result searches go to Google Search through SerpApi, LLC (United States, serpapi.com) once, when you press the button: the service opens the photo at a temporary, unguessable address for up to 5 minutes so SerpApi can fetch it, and closes the address as soon as the search ends. Spread monitoring sends the photo directly over an encrypted connection (HTTPS) to Google Cloud Vision by Google LLC (United States, cloud.google.com) when you start it and once a day until you stop it. We store the addresses and titles of the web pages found, and delete detection-result search records after 30 days. How long the recipients keep and use the photo follows each company's privacy policy. If you don't press the button, your photo isn't sent, and you'll get the detection result without web search results.",
         },
         {
           heading: "Connecting to agencies",
@@ -309,7 +309,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "Web逆画像検索",
           description:
-            "ディープフェイク検出の結果で「Webで探す」に同意した場合や拡散モニタリングを開始した場合、同じ画像が掲載されたWebページを探すために写真が外部の検索サービスへ送信されます。検出結果の検索はSerpApi（米国）を通じてGoogle検索へ、拡散モニタリングはGoogle Cloud Vision（米国）へ送信され、モニタリングは停止するまで1日1回再検索します。検索で見つかったWebページのアドレスとタイトルはサービスに保存し、検出結果の検索記録は30日経過後に削除します。外部サービスへ送信された写真は、各サービスのプライバシーポリシーに従って処理されます。",
+            "ディープフェイク検出の結果で「同意してWebで探す」または「同意してモニタリングを開始」を押した場合、同じ画像が掲載されたWebページを探すために写真が国外の検索サービスへ送信されます。検出結果の検索はSerpApi, LLC（米国、serpapi.com）を通じてGoogle検索へ送信され、ボタンを押したときに1回、サービスが推測できない一時アドレスで写真を最大5分間公開してSerpApiが取得できるようにし、検索が終わるとすぐにアドレスを閉じます。拡散モニタリングはGoogle LLC（米国、cloud.google.com）のGoogle Cloud Visionへ、開始時と停止するまで1日1回、暗号化された接続（HTTPS）で写真を直接送信します。サービスは検索で見つかったWebページのアドレスとタイトルを保存し、検出結果の検索記録は30日経過後に削除します。受領者が写真を保有・利用する期間は各社のプライバシーポリシーに従います。ボタンを押さなければ写真は送信されず、その場合はWeb検索の結果なしで検出結果のみを提供します。",
         },
         {
           heading: "専門機関へのおつなぎ",
@@ -400,7 +400,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "网络以图搜图",
           description:
-            "如果您在深度伪造检测结果中同意“在网络上查找”，或开始传播监测，为查找刊登相同图片的网页，照片会被发送到外部搜索服务。检测结果的搜索通过 SerpApi（美国）发送到 Google 搜索，传播监测发送到 Google Cloud Vision（美国），监测在您停止之前每天重新搜索一次。通过搜索找到的网页地址和标题会保存在服务中，检测结果的搜索记录将在 30 天后删除。发送到外部服务的照片将按照各服务的隐私政策处理。",
+            "如果您在深度伪造检测结果中点击“同意并在网络上查找”，或点击“同意并开始监测”，为查找刊登相同图片的网页，照片会被发送到境外的搜索服务。检测结果的搜索经由 SerpApi, LLC（美国，serpapi.com）发送到 Google 搜索，在您点击按钮时进行一次：服务会用无法猜测的临时地址公开照片最多 5 分钟，供 SerpApi 获取，搜索结束后立即关闭该地址。传播监测会在开始时以及停止前每天一次，通过加密连接（HTTPS）将照片直接发送到 Google LLC（美国，cloud.google.com）的 Google Cloud Vision。服务会保存通过搜索找到的网页地址和标题，检测结果的搜索记录将在 30 天后删除。接收方保存和使用照片的期限遵循各公司的隐私政策。如果您不点击按钮，照片不会被发送，此时仅提供不含网络搜索结果的检测结果。",
         },
         {
           heading: "对接专业机构",
