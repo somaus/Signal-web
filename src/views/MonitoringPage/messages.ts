@@ -1,4 +1,3 @@
-import type { MatchType } from "@/entities/monitoring/api";
 import { defineMessages } from "@/shared/i18n/defineMessages";
 
 export const monitoringMessages = defineMessages(
@@ -32,12 +31,6 @@ export const monitoringMessages = defineMessages(
     loading: "불러오는 중...",
     loadFailed: "탐지 결과를 불러오지 못했습니다.",
     empty: "아직 발견된 웹 페이지가 없습니다.",
-    matchType: {
-      FULL: "동일 이미지",
-      PARTIAL: "일부 일치",
-      PAGE: "같은 페이지에 노출",
-      SIMILAR: "비슷한 이미지",
-    } as Record<MatchType, string>,
     simulatedBadge: "시연용 예시",
     viewSource: "원본 보기",
     prev: "이전",
@@ -78,12 +71,6 @@ export const monitoringMessages = defineMessages(
       loading: "Loading...",
       loadFailed: "Couldn't load the results.",
       empty: "No web pages found yet.",
-      matchType: {
-        FULL: "Same image",
-        PARTIAL: "Partial match",
-        PAGE: "Appears on the same page",
-        SIMILAR: "Similar image",
-      },
       simulatedBadge: "Demo example",
       viewSource: "View source",
       prev: "Previous",
@@ -124,12 +111,6 @@ export const monitoringMessages = defineMessages(
       loading: "読み込み中...",
       loadFailed: "検出結果を読み込めませんでした。",
       empty: "まだWebページは見つかっていません。",
-      matchType: {
-        FULL: "同一画像",
-        PARTIAL: "一部一致",
-        PAGE: "同じページに掲載",
-        SIMILAR: "似た画像",
-      },
       simulatedBadge: "デモ用サンプル",
       viewSource: "元のページを見る",
       prev: "前へ",
@@ -167,12 +148,6 @@ export const monitoringMessages = defineMessages(
       loading: "正在加载...",
       loadFailed: "无法加载检测结果。",
       empty: "尚未发现网页。",
-      matchType: {
-        FULL: "相同图片",
-        PARTIAL: "部分一致",
-        PAGE: "出现在同一网页",
-        SIMILAR: "相似图片",
-      },
       simulatedBadge: "演示示例",
       viewSource: "查看原网页",
       prev: "上一页",

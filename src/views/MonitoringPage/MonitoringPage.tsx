@@ -24,16 +24,15 @@ import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { formatDateLong, formatDateTime } from "@/shared/i18n/format";
+import { isWebUrl } from "@/shared/lib/url";
+import { webMatchMessages } from "@/shared/lib/webMatch";
 import { monitoringMessages } from "./messages";
 
 const PAGE_SIZE = 9;
 
-function isWebUrl(url: string | null | undefined): url is string {
-  return typeof url === "string" && /^https?:\/\//i.test(url);
-}
-
 export default function MonitoringPage() {
   const t = useT(monitoringMessages);
+  const matchTypeLabel = useT(webMatchMessages);
   const { locale } = useLocale();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -262,7 +261,7 @@ export default function MonitoringPage() {
                           {(detection.matchType || detection.simulated) && (
                             <p className="text-body-2 md:text-body-1 font-semibold text-black">
                               {detection.matchType
-                                ? t.matchType[detection.matchType]
+                                ? matchTypeLabel[detection.matchType]
                                 : t.simulatedBadge}
                             </p>
                           )}

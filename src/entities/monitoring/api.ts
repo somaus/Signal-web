@@ -1,8 +1,7 @@
 import { api } from "@/shared/api/axios";
+import type { WebMatchType } from "@/shared/lib/webMatch";
 
 export type MonitoringStatus = "ACTIVE" | "PAUSED";
-
-export type MatchType = "FULL" | "PARTIAL" | "PAGE" | "SIMILAR";
 
 export interface MonitoringCreateResponse {
   monitoringId: number;
@@ -24,7 +23,7 @@ export interface DetectionResponse {
   title?: string | null;
   sourceDomain?: string | null;
   similarity?: number | null;
-  matchType?: MatchType | null;
+  matchType?: WebMatchType | null;
   detectedAt: string;
   simulated?: boolean;
 }
