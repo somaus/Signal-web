@@ -70,7 +70,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
       {
         label: "서비스 이용 정보",
         value:
-          "분석·탐지를 위해 업로드한 사진·영상, 분석·탐지 기록, 저장에 동의한 상담 내역, 신고 문서 내역",
+          "분석·탐지를 위해 업로드한 사진·영상, 분석·탐지 기록, 웹 검색으로 찾은 웹 페이지 주소·제목, 저장에 동의한 상담 내역, 신고 문서 내역",
       },
       { label: "자동 생성 정보", value: "접속 기록, 브라우저 및 기기 정보, 서비스 이용 시간" },
     ],
@@ -110,6 +110,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         heading: "이미지 및 영상 분석",
         description:
           "업로드한 사진·영상은 분석·탐지 결과와 함께 서버에 저장됩니다. 현재는 자동 삭제 기간이 정해져 있지 않아, 기록을 삭제하거나 회원 탈퇴를 해도 파일이 서버에 남을 수 있습니다. 보관 기간과 삭제 절차가 정해지면 이 방침을 개정해 안내합니다.",
+      },
+      {
+        heading: "웹 역이미지 검색",
+        description:
+          "딥페이크 탐지 결과에서 '동의하고 웹에서 찾아보기'를 누르거나 '동의하고 모니터링 시작'을 누른 경우, 같은 이미지가 실린 웹 페이지를 찾기 위해 사진이 국외의 검색 서비스로 전송됩니다. 탐지 결과의 검색은 SerpApi, LLC(미국, serpapi.com)를 거쳐 Google 검색으로 전송되며, 버튼을 누를 때 한 번, 서비스가 사진을 추측할 수 없는 임시 주소로 최대 5분 동안 열어 SerpApi가 가져가게 하고 검색이 끝나면 주소를 바로 닫습니다. 유포 모니터링은 Google LLC(미국, cloud.google.com)의 Google Cloud Vision으로, 시작할 때와 이후 중지할 때까지 하루 한 번 사진을 암호화된 연결(HTTPS)로 직접 전송합니다. 서비스는 검색으로 찾은 웹 페이지 주소와 제목을 저장하며, 탐지 결과의 검색 기록은 30일이 지나면 삭제합니다. 받는 자가 사진을 보유·이용하는 기간은 각 사의 개인정보처리방침을 따릅니다. 버튼을 누르지 않으면 사진은 전송되지 않으며, 이 경우 웹 검색 결과 없이 탐지 결과만 제공됩니다.",
       },
       {
         heading: "전문 기관 연결",
@@ -160,7 +165,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           label: "Service usage information",
           value:
-            "Photos and videos uploaded for analysis or detection, analysis and detection history, chat history you agreed to save, report document history",
+            "Photos and videos uploaded for analysis or detection, analysis and detection history, addresses and titles of web pages found by web search, chat history you agreed to save, report document history",
         },
         {
           label: "Automatically generated information",
@@ -203,6 +208,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
           heading: "Image and video analysis",
           description:
             "Uploaded photos and videos are stored on our servers together with the analysis or detection results. No automatic deletion period has been set yet, so files may remain on our servers even after you delete the records or your account. Once a retention period and deletion procedure are set, we will update this policy.",
+        },
+        {
+          heading: "Reverse image search on the web",
+          description:
+            "If you press 'Agree and search the web' on a deepfake detection result or 'Agree and start monitoring', your photo is sent to a search service outside Korea to find web pages where the same image appears. Detection-result searches go to Google Search through SerpApi, LLC (United States, serpapi.com) once, when you press the button: the service opens the photo at a temporary, unguessable address for up to 5 minutes so SerpApi can fetch it, and closes the address as soon as the search ends. Spread monitoring sends the photo directly over an encrypted connection (HTTPS) to Google Cloud Vision by Google LLC (United States, cloud.google.com) when you start it and once a day until you stop it. We store the addresses and titles of the web pages found, and delete detection-result search records after 30 days. How long the recipients keep and use the photo follows each company's privacy policy. If you don't press the button, your photo isn't sent, and you'll get the detection result without web search results.",
         },
         {
           heading: "Connecting to agencies",
@@ -252,7 +262,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           label: "サービス利用情報",
           value:
-            "分析・検出のためにアップロードされた写真・動画、分析・検出の記録、保存に同意した相談履歴、通報書類の履歴",
+            "分析・検出のためにアップロードされた写真・動画、分析・検出の記録、Web検索で見つかったWebページのアドレス・タイトル、保存に同意した相談履歴、通報書類の履歴",
         },
         {
           label: "自動生成情報",
@@ -295,6 +305,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
           heading: "画像・動画の分析",
           description:
             "アップロードされた写真・動画は、分析・検出結果とともにサーバーに保存されます。現在は自動削除の期間が定められていないため、記録を削除したり退会したりしても、ファイルがサーバーに残る場合があります。保管期間と削除手続きが決まり次第、本ポリシーを改定してお知らせします。",
+        },
+        {
+          heading: "Web逆画像検索",
+          description:
+            "ディープフェイク検出の結果で「同意してWebで探す」または「同意してモニタリングを開始」を押した場合、同じ画像が掲載されたWebページを探すために写真が国外の検索サービスへ送信されます。検出結果の検索はSerpApi, LLC（米国、serpapi.com）を通じてGoogle検索へ送信され、ボタンを押したときに1回、サービスが推測できない一時アドレスで写真を最大5分間公開してSerpApiが取得できるようにし、検索が終わるとすぐにアドレスを閉じます。拡散モニタリングはGoogle LLC（米国、cloud.google.com）のGoogle Cloud Visionへ、開始時と停止するまで1日1回、暗号化された接続（HTTPS）で写真を直接送信します。サービスは検索で見つかったWebページのアドレスとタイトルを保存し、検出結果の検索記録は30日経過後に削除します。受領者が写真を保有・利用する期間は各社のプライバシーポリシーに従います。ボタンを押さなければ写真は送信されず、その場合はWeb検索の結果なしで検出結果のみを提供します。",
         },
         {
           heading: "専門機関へのおつなぎ",
@@ -341,7 +356,8 @@ export const privacyMessages = defineMessages<PrivacyText>(
         },
         {
           label: "服务使用信息",
-          value: "为分析与检测而上传的照片和视频、分析与检测记录、同意保存的咨询记录、举报文件记录",
+          value:
+            "为分析与检测而上传的照片和视频、分析与检测记录、通过网络搜索找到的网页地址和标题、同意保存的咨询记录、举报文件记录",
         },
         { label: "自动生成信息", value: "访问记录、浏览器及设备信息、服务使用时间" },
       ],
@@ -380,6 +396,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
           heading: "图片与视频分析",
           description:
             "上传的照片和视频会与分析、检测结果一起保存在服务器上。目前尚未设定自动删除期限，因此即使删除记录或注销账号，文件仍可能保留在服务器上。保存期限和删除流程确定后，我们将修订本政策并另行通知。",
+        },
+        {
+          heading: "网络以图搜图",
+          description:
+            "如果您在深度伪造检测结果中点击“同意并在网络上查找”，或点击“同意并开始监测”，为查找刊登相同图片的网页，照片会被发送到境外的搜索服务。检测结果的搜索经由 SerpApi, LLC（美国，serpapi.com）发送到 Google 搜索，在您点击按钮时进行一次：服务会用无法猜测的临时地址公开照片最多 5 分钟，供 SerpApi 获取，搜索结束后立即关闭该地址。传播监测会在开始时以及停止前每天一次，通过加密连接（HTTPS）将照片直接发送到 Google LLC（美国，cloud.google.com）的 Google Cloud Vision。服务会保存通过搜索找到的网页地址和标题，检测结果的搜索记录将在 30 天后删除。接收方保存和使用照片的期限遵循各公司的隐私政策。如果您不点击按钮，照片不会被发送，此时仅提供不含网络搜索结果的检测结果。",
         },
         {
           heading: "对接专业机构",

@@ -13,21 +13,50 @@ const pollMessages = defineMessages(
 interface PollOptions {
   intervalMs?: number;
   timeoutMs?: number;
+  signal?: AbortSignal;
+}
+
+function abortError() {
+  return new DOMException("Polling aborted", "AbortError");
+}
+
+export function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
+}
+
+function wait(ms: number, signal?: AbortSignal) {
+  return new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(abortError());
+      return;
+    }
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(abortError());
+    };
+    const timer = setTimeout(() => {
+      signal?.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
 }
 
 export async function pollUntil<T>(
   fetchFn: () => Promise<T>,
   isDone: (result: T) => boolean,
-  { intervalMs = 1500, timeoutMs = 30_000 }: PollOptions = {},
+  { intervalMs = 1500, timeoutMs = 30_000, signal }: PollOptions = {},
 ): Promise<T> {
   const start = Date.now();
+  if (signal?.aborted) throw abortError();
   let result = await fetchFn();
   while (!isDone(result)) {
     if (Date.now() - start > timeoutMs) {
       throw new Error(translate(pollMessages).timeout);
     }
-    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    await wait(intervalMs, signal);
     result = await fetchFn();
+    if (signal?.aborted) throw abortError();
   }
   return result;
 }

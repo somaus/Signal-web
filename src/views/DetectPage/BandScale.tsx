@@ -9,16 +9,18 @@ const SCALE_BANDS = ["LOW", "UNCERTAIN", "HIGH"] as const;
 
 interface BandScaleProps {
   band: DeepfakeBand;
+  label?: string;
 }
 
-export default function BandScale({ band }: BandScaleProps) {
+export default function BandScale({ band, label }: BandScaleProps) {
   const t = useT(detectMessages);
   const style = bandClass[band];
+  const title = label ?? t.band[band];
 
   return (
     <div className="flex w-full flex-col items-center gap-5 py-4 md:py-6">
-      <p className={`text-h3 text-center font-bold ${style.text}`}>{t.band[band]}</p>
-      <div role="img" aria-label={t.band[band]} className="grid w-full grid-cols-3 gap-1.5">
+      <p className={`text-h3 text-center font-bold ${style.text}`}>{title}</p>
+      <div role="img" aria-label={title} className="grid w-full grid-cols-3 gap-1.5">
         {SCALE_BANDS.map((scaleBand) => {
           const active = scaleBand === band;
           return (

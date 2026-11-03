@@ -1,5 +1,10 @@
 import { defineMessages } from "@/shared/i18n/defineMessages";
-import type { DeepfakeBand, DeepfakeVerdict, DetectionFailureReason } from "./detectApi";
+import type {
+  DeepfakeBand,
+  DeepfakeVerdict,
+  DetectionFailureReason,
+  WebSearchUnavailableReason,
+} from "./detectApi";
 
 interface FailureText {
   title: string;
@@ -106,6 +111,54 @@ export const detectMessages = defineMessages(
       "이 결과는 자동 분석으로 얻은 참고용 정보이며 사진의 진위를 보증하지 않습니다. 피해가 걱정된다면 익명 상담이나 신고 문서 작성을 이용해 보세요.",
     modelLabel: (name: string, version: string | null) =>
       `분석 모델: ${name}${version ? ` (${version})` : ""}`,
+    webSearch: {
+      consent:
+        "웹에서 찾아보면 이 사진이 외부 검색 서비스(Google)로 전송됩니다. 같은 사진이 실린 페이지를 찾는 기능이라, 같은 사람의 다른 사진은 찾지 못합니다.",
+      start: "동의하고 웹에서 찾아보기",
+      searching: "웹에서 찾는 중...",
+      searchingCaption: "몇 분 정도 걸릴 수 있습니다.",
+      state: {
+        IDLE: "아직 검색하지 않음",
+        FOUND: "같은 이미지 발견",
+        SIMILAR_ONLY: "비슷한 이미지만 발견",
+        NONE: "같은 이미지를 찾지 못함",
+        UNAVAILABLE: "지금은 검색할 수 없음",
+        FAILED: "검색에 실패함",
+      },
+      caption: {
+        FOUND:
+          "이 사진과 같은 이미지가 올라온 웹 페이지를 찾았습니다. 본인이 올린 게시물일 수도 있으니 목록을 확인해 주세요.",
+        SIMILAR_ONLY: "같은 이미지는 찾지 못했고, 비슷해 보이는 이미지만 있습니다.",
+        NONE: "공개된 웹에서 같은 이미지를 찾지 못했습니다. 검색되지 않는 곳에 올라와 있을 수는 있습니다.",
+        FAILED: "검색 중 문제가 생겼습니다. 잠시 후 사진을 다시 탐지해 주세요.",
+      },
+      unavailable: {
+        VIDEO: "영상은 웹 검색을 지원하지 않습니다.",
+        OWNER_LIMIT: "오늘 사용할 수 있는 웹 검색 횟수를 모두 썼습니다. 내일 다시 시도해 주세요.",
+        DAILY_LIMIT: "오늘 서비스의 웹 검색 한도에 도달했습니다. 내일 다시 시도해 주세요.",
+        MONTHLY_LIMIT: "이번 달 서비스의 웹 검색 한도에 도달했습니다.",
+      } as Record<WebSearchUnavailableReason, string>,
+      countLabel: "발견된 웹 페이지",
+      countSuffix: "건",
+      listIdle: "웹에서 찾아보면 이 사진이 올라온 웹 페이지가 여기에 표시됩니다.",
+      listEmpty: "표시할 웹 페이지가 없습니다.",
+      listNote: "찾은 페이지가 모두 도용은 아닙니다. 본인이 직접 올린 게시물일 수도 있습니다.",
+      untitled: "제목 없는 페이지",
+      showLess: "접기",
+      failed: "웹 검색을 시작하지 못했습니다.",
+    },
+    overallLevel: {
+      LOW: "위험 낮음",
+      UNCERTAIN: "주의 필요",
+      HIGH: "위험 높음",
+      UNDETERMINED: "판단할 수 없음",
+    } as Record<DeepfakeBand, string>,
+    overallWebNote: {
+      RAISED: "웹에서 같은 이미지가 발견되어 위험 단계를 한 단계 높였습니다.",
+      SIMILAR_ONLY: "비슷한 이미지는 위험 단계에 반영하지 않았습니다.",
+      NONE: "웹에서 같은 이미지를 찾지 못해 딥페이크 결과만으로 판단했습니다.",
+      NOT_APPLIED: "웹 검색 결과는 반영되지 않았습니다.",
+    },
     result: {
       title: "탐지 결과",
       faceTheft: "얼굴 도용 여부",
@@ -232,6 +285,55 @@ export const detectMessages = defineMessages(
       referenceNotice:
         "This result comes from automated analysis, is for reference only, and doesn't guarantee whether the photo is authentic. If you're worried about harm, try talking anonymously or writing a report.",
       modelLabel: (name, version) => `Model: ${name}${version ? ` (${version})` : ""}`,
+      webSearch: {
+        consent:
+          "Searching the web sends this photo to an external search service (Google). It finds pages with the same photo, so it can't find other photos of the same person.",
+        start: "Agree and search the web",
+        searching: "Searching the web...",
+        searchingCaption: "This may take a few minutes.",
+        state: {
+          IDLE: "Not searched yet",
+          FOUND: "Same image found",
+          SIMILAR_ONLY: "Only similar images found",
+          NONE: "Same image not found",
+          UNAVAILABLE: "Search unavailable right now",
+          FAILED: "Search failed",
+        },
+        caption: {
+          FOUND:
+            "We found web pages with the same image as this photo. Some may be posts you uploaded yourself, so please check the list.",
+          SIMILAR_ONLY: "We didn't find the same image, only images that look similar.",
+          NONE: "We didn't find the same image on the public web. It may still be posted somewhere that isn't searchable.",
+          FAILED: "Something went wrong during the search. Please run the detection again later.",
+        },
+        unavailable: {
+          VIDEO: "Web search isn't available for videos.",
+          OWNER_LIMIT: "You've used all of today's web searches. Please try again tomorrow.",
+          DAILY_LIMIT:
+            "The service has reached today's web search limit. Please try again tomorrow.",
+          MONTHLY_LIMIT: "The service has reached this month's web search limit.",
+        },
+        countLabel: "Web pages found",
+        countSuffix: "",
+        listIdle: "Search the web to see pages where this photo appears.",
+        listEmpty: "No web pages to show.",
+        listNote: "Not every page found is misuse. Some may be posts you uploaded yourself.",
+        untitled: "Untitled page",
+        showLess: "Show less",
+        failed: "Couldn't start the web search.",
+      },
+      overallLevel: {
+        LOW: "Low risk",
+        UNCERTAIN: "Caution",
+        HIGH: "High risk",
+        UNDETERMINED: "Can't be determined",
+      },
+      overallWebNote: {
+        RAISED: "The same image was found on the web, so we raised the risk level by one step.",
+        SIMILAR_ONLY: "Similar images weren't counted toward the risk level.",
+        NONE: "The same image wasn't found on the web, so this is based on the deepfake result only.",
+        NOT_APPLIED: "Web search results aren't included.",
+      },
       result: {
         title: "Detection results",
         faceTheft: "Face theft",
@@ -351,6 +453,56 @@ export const detectMessages = defineMessages(
       referenceNotice:
         "この結果は自動分析による参考情報であり、写真の真偽を保証するものではありません。被害が心配な場合は、匿名相談や通報書類の作成をご利用ください。",
       modelLabel: (name, version) => `分析モデル: ${name}${version ? ` (${version})` : ""}`,
+      webSearch: {
+        consent:
+          "Webで探すと、この写真が外部の検索サービス（Google）へ送信されます。同じ写真が掲載されたページを探す機能のため、同じ人物の別の写真は見つけられません。",
+        start: "同意してWebで探す",
+        searching: "Webで探しています...",
+        searchingCaption: "数分かかる場合があります。",
+        state: {
+          IDLE: "まだ検索していません",
+          FOUND: "同じ画像が見つかりました",
+          SIMILAR_ONLY: "似た画像のみ見つかりました",
+          NONE: "同じ画像は見つかりませんでした",
+          UNAVAILABLE: "現在は検索できません",
+          FAILED: "検索に失敗しました",
+        },
+        caption: {
+          FOUND:
+            "この写真と同じ画像が掲載されたWebページが見つかりました。ご本人の投稿の場合もあるため、一覧をご確認ください。",
+          SIMILAR_ONLY: "同じ画像は見つからず、似て見える画像のみがあります。",
+          NONE: "公開されたWeb上で同じ画像は見つかりませんでした。検索できない場所に掲載されている可能性はあります。",
+          FAILED: "検索中に問題が発生しました。しばらくしてから写真をもう一度検出してください。",
+        },
+        unavailable: {
+          VIDEO: "動画はWeb検索に対応していません。",
+          OWNER_LIMIT: "本日のWeb検索の回数をすべて使いました。明日もう一度お試しください。",
+          DAILY_LIMIT:
+            "本日のサービス全体のWeb検索の上限に達しました。明日もう一度お試しください。",
+          MONTHLY_LIMIT: "今月のサービス全体のWeb検索の上限に達しました。",
+        },
+        countLabel: "見つかったWebページ",
+        countSuffix: "件",
+        listIdle: "Webで探すと、この写真が掲載されたWebページがここに表示されます。",
+        listEmpty: "表示するWebページはありません。",
+        listNote:
+          "見つかったページがすべて盗用とは限りません。ご本人が投稿したものの場合もあります。",
+        untitled: "タイトルのないページ",
+        showLess: "閉じる",
+        failed: "Web検索を開始できませんでした。",
+      },
+      overallLevel: {
+        LOW: "危険度は低い",
+        UNCERTAIN: "注意が必要",
+        HIGH: "危険度が高い",
+        UNDETERMINED: "判断できません",
+      },
+      overallWebNote: {
+        RAISED: "Web上で同じ画像が見つかったため、危険度を1段階上げました。",
+        SIMILAR_ONLY: "似た画像は危険度に反映していません。",
+        NONE: "Web上で同じ画像が見つからなかったため、ディープフェイクの結果のみで判断しました。",
+        NOT_APPLIED: "Web検索の結果は反映されていません。",
+      },
       result: {
         title: "検出結果",
         faceTheft: "顔の盗用",
@@ -459,6 +611,53 @@ export const detectMessages = defineMessages(
       referenceNotice:
         "此结果是自动分析得出的参考信息，不能保证照片的真伪。如果担心受到伤害，可以使用匿名咨询或撰写举报文件。",
       modelLabel: (name, version) => `分析模型：${name}${version ? `（${version}）` : ""}`,
+      webSearch: {
+        consent:
+          "在网络上查找时，这张照片会被发送到外部搜索服务（Google）。此功能查找刊登了同一张照片的网页，无法找到同一人的其他照片。",
+        start: "同意并在网络上查找",
+        searching: "正在网络上查找...",
+        searchingCaption: "可能需要几分钟。",
+        state: {
+          IDLE: "尚未搜索",
+          FOUND: "发现相同图片",
+          SIMILAR_ONLY: "仅发现相似图片",
+          NONE: "未发现相同图片",
+          UNAVAILABLE: "暂时无法搜索",
+          FAILED: "搜索失败",
+        },
+        caption: {
+          FOUND: "找到了刊登与这张照片相同图片的网页。其中可能有您本人发布的内容，请查看列表。",
+          SIMILAR_ONLY: "未找到相同图片，只有看起来相似的图片。",
+          NONE: "在公开网络上未找到相同图片。图片仍可能发布在无法搜索到的地方。",
+          FAILED: "搜索时出现问题，请稍后重新检测照片。",
+        },
+        unavailable: {
+          VIDEO: "视频不支持网络搜索。",
+          OWNER_LIMIT: "您今天的网络搜索次数已用完，请明天再试。",
+          DAILY_LIMIT: "服务今天的网络搜索次数已达上限，请明天再试。",
+          MONTHLY_LIMIT: "服务本月的网络搜索次数已达上限。",
+        },
+        countLabel: "发现的网页",
+        countSuffix: "个",
+        listIdle: "在网络上查找后，刊登这张照片的网页会显示在这里。",
+        listEmpty: "没有可显示的网页。",
+        listNote: "找到的网页不一定都是盗用，也可能是您本人发布的内容。",
+        untitled: "无标题网页",
+        showLess: "收起",
+        failed: "无法开始网络搜索。",
+      },
+      overallLevel: {
+        LOW: "风险较低",
+        UNCERTAIN: "需要注意",
+        HIGH: "风险较高",
+        UNDETERMINED: "无法判断",
+      },
+      overallWebNote: {
+        RAISED: "在网络上发现了相同图片，因此将风险等级提高了一级。",
+        SIMILAR_ONLY: "相似图片未计入风险等级。",
+        NONE: "未在网络上发现相同图片，因此仅根据深度伪造结果判断。",
+        NOT_APPLIED: "未纳入网络搜索结果。",
+      },
       result: {
         title: "检测结果",
         faceTheft: "面部盗用",
