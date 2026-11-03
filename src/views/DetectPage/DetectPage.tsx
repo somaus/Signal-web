@@ -7,7 +7,7 @@ import AnalysisGuideCard from "@/shared/ui/AnalysisGuideCard";
 import Button from "@/shared/ui/Button";
 import PageHeading from "@/shared/ui/PageHeading";
 import { ApiError } from "@/shared/api/axios";
-import { pollUntil } from "@/shared/lib/poll";
+import { isAbortError, pollUntil } from "@/shared/lib/poll";
 import { scrollToElement } from "@/shared/lib/scrollToElement";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -130,6 +130,11 @@ export default function DetectPage() {
   const [webSearchOff, setWebSearchOff] = useState(false);
   const result: DetectResult = detection ? mapDetection(detection, t) : MOCK_RESULT;
   const resultRef = useRef<HTMLDivElement>(null);
+  const webSearchAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => webSearchAbortRef.current?.abort();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -148,7 +153,14 @@ export default function DetectPage() {
     setStatus("selected");
   }
 
+  function cancelWebSearch() {
+    webSearchAbortRef.current?.abort();
+    webSearchAbortRef.current = null;
+    webSearchMutation.reset();
+  }
+
   function handleReset() {
+    cancelWebSearch();
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
     setSelectedFile(null);
@@ -157,12 +169,15 @@ export default function DetectPage() {
 
   const webSearchMutation = useMutation({
     mutationFn: async (detectionId: number): Promise<WebSearchResponse> => {
+      webSearchAbortRef.current?.abort();
+      const controller = new AbortController();
+      webSearchAbortRef.current = controller;
       const started = await startWebSearch(detectionId);
       if (started.status !== "PROCESSING") return started;
       const latest = await pollUntil(
         () => getDeepfakeDetection(detectionId),
         (polled) => polled.webSearch?.status !== "PROCESSING",
-        WEB_SEARCH_POLL,
+        { ...WEB_SEARCH_POLL, signal: controller.signal },
       );
       return latest.webSearch ?? started;
     },
@@ -172,6 +187,7 @@ export default function DetectPage() {
       );
     },
     onError: (error) => {
+      if (isAbortError(error)) return;
       if (error instanceof ApiError && error.code === "NOT_FOUND") {
         setWebSearchOff(true);
         return;
@@ -202,7 +218,7 @@ export default function DetectPage() {
       }
       setDetection(data);
       setWebSearchOff(false);
-      webSearchMutation.reset();
+      cancelWebSearch();
       setStatus("result");
     },
     onError: (error) => {
