@@ -1,18 +1,31 @@
 import { api } from "@/shared/api/axios";
+import type { WebMatchType } from "@/shared/lib/webMatch";
 
-export type MonitoringStatus = "ACTIVE";
+export type MonitoringStatus = "ACTIVE" | "PAUSED";
 
 export interface MonitoringCreateResponse {
   monitoringId: number;
   status: MonitoringStatus;
 }
 
+export interface MonitoringResponse {
+  monitoringId: number;
+  status: MonitoringStatus;
+  createdAt: string;
+  lastSearchedAt?: string | null;
+  nextSearchAt?: string | null;
+}
+
 export interface DetectionResponse {
   detectionId: number;
-  sourceUrl?: string;
-  thumbnailUrl?: string;
-  similarity?: number;
+  sourceUrl?: string | null;
+  thumbnailUrl?: string | null;
+  title?: string | null;
+  sourceDomain?: string | null;
+  similarity?: number | null;
+  matchType?: WebMatchType | null;
   detectedAt: string;
+  simulated?: boolean;
 }
 
 export interface DetectionPageResponse {
@@ -27,6 +40,11 @@ export async function createMonitoring(referenceImage: File): Promise<Monitoring
   const { data } = await api.post<MonitoringCreateResponse>("/api/v1/monitorings", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+  return data;
+}
+
+export async function getMonitoring(monitoringId: number): Promise<MonitoringResponse> {
+  const { data } = await api.get<MonitoringResponse>(`/api/v1/monitorings/${monitoringId}`);
   return data;
 }
 
