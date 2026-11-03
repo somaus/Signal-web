@@ -3,7 +3,6 @@ import type {
   DeepfakeBand,
   DeepfakeVerdict,
   DetectionFailureReason,
-  WebMatchType,
   WebSearchUnavailableReason,
 } from "./detectApi";
 
@@ -141,12 +140,6 @@ export const detectMessages = defineMessages(
       } as Record<WebSearchUnavailableReason, string>,
       countLabel: "발견된 웹 페이지",
       countSuffix: "건",
-      matchType: {
-        FULL: "동일 이미지",
-        PARTIAL: "일부 일치",
-        PAGE: "같은 페이지에 노출",
-        SIMILAR: "비슷한 이미지",
-      } as Record<WebMatchType, string>,
       listIdle: "웹에서 찾아보면 이 사진이 올라온 웹 페이지가 여기에 표시됩니다.",
       listEmpty: "표시할 웹 페이지가 없습니다.",
       listNote: "찾은 페이지가 모두 도용은 아닙니다. 본인이 직접 올린 게시물일 수도 있습니다.",
@@ -322,12 +315,6 @@ export const detectMessages = defineMessages(
         },
         countLabel: "Web pages found",
         countSuffix: "",
-        matchType: {
-          FULL: "Same image",
-          PARTIAL: "Partial match",
-          PAGE: "Appears on the same page",
-          SIMILAR: "Similar image",
-        },
         listIdle: "Search the web to see pages where this photo appears.",
         listEmpty: "No web pages to show.",
         listNote: "Not every page found is misuse. Some may be posts you uploaded yourself.",
@@ -496,12 +483,6 @@ export const detectMessages = defineMessages(
         },
         countLabel: "見つかったWebページ",
         countSuffix: "件",
-        matchType: {
-          FULL: "同一画像",
-          PARTIAL: "一部一致",
-          PAGE: "同じページに掲載",
-          SIMILAR: "似た画像",
-        },
         listIdle: "Webで探すと、この写真が掲載されたWebページがここに表示されます。",
         listEmpty: "表示するWebページはありません。",
         listNote:
@@ -658,12 +639,6 @@ export const detectMessages = defineMessages(
         },
         countLabel: "发现的网页",
         countSuffix: "个",
-        matchType: {
-          FULL: "相同图片",
-          PARTIAL: "部分一致",
-          PAGE: "出现在同一网页",
-          SIMILAR: "相似图片",
-        },
         listIdle: "在网络上查找后，刊登这张照片的网页会显示在这里。",
         listEmpty: "没有可显示的网页。",
         listNote: "找到的网页不一定都是盗用，也可能是您本人发布的内容。",

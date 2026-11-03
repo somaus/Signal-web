@@ -1,4 +1,5 @@
-import type { DeepfakeBand, WebMatchResponse, WebSearchResponse } from "./detectApi";
+import { isSameImageMatch } from "@/shared/lib/webMatch";
+import type { DeepfakeBand, WebSearchResponse } from "./detectApi";
 
 export type WebSearchOutcome =
   | "IDLE"
@@ -16,10 +17,6 @@ const RAISED_BAND: Record<DeepfakeBand, DeepfakeBand> = {
   UNDETERMINED: "UNCERTAIN",
 };
 
-export function isSameImage(match: WebMatchResponse): boolean {
-  return match.matchType === "FULL" || match.matchType === "PARTIAL";
-}
-
 export function getWebSearchOutcome(
   webSearch: WebSearchResponse | null | undefined,
 ): WebSearchOutcome {
@@ -28,7 +25,7 @@ export function getWebSearchOutcome(
   if (webSearch.status === "UNAVAILABLE") return "UNAVAILABLE";
   if (webSearch.status === "FAILED") return "FAILED";
   const matches = webSearch.matches ?? [];
-  if (matches.some(isSameImage)) return "FOUND";
+  if (matches.some((match) => isSameImageMatch(match.matchType))) return "FOUND";
   return matches.length > 0 ? "SIMILAR_ONLY" : "NONE";
 }
 

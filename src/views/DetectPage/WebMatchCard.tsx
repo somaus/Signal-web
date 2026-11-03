@@ -2,15 +2,13 @@
 
 import { useState } from "react";
 import { useT } from "@/shared/i18n/I18nProvider";
+import { isWebUrl } from "@/shared/lib/url";
+import { isSameImageMatch, webMatchMessages } from "@/shared/lib/webMatch";
 import type { WebSearchResponse } from "./detectApi";
 import { detectMessages } from "./messages";
-import { getWebSearchOutcome, isSameImage } from "./webSearchOutcome";
+import { getWebSearchOutcome } from "./webSearchOutcome";
 
 const COLLAPSED_COUNT = 3;
-
-function isWebUrl(url: string): boolean {
-  return /^https?:\/\//i.test(url);
-}
 
 interface WebMatchCardProps {
   webSearch: WebSearchResponse | null;
@@ -22,6 +20,7 @@ export default function WebMatchCard({ webSearch, off, pending }: WebMatchCardPr
   const messages = useT(detectMessages);
   const t = messages.webSearch;
   const tr = messages.result;
+  const matchTypeLabel = useT(webMatchMessages);
   const [expanded, setExpanded] = useState(false);
   const outcome = pending ? "SEARCHING" : getWebSearchOutcome(webSearch);
   const matches = (webSearch?.matches ?? []).filter((match) => isWebUrl(match.pageUrl));
@@ -53,10 +52,10 @@ export default function WebMatchCard({ webSearch, off, pending }: WebMatchCardPr
                 >
                   <span
                     className={`text-caption font-semibold ${
-                      isSameImage(match) ? "text-red-500" : "text-yellow-500"
+                      isSameImageMatch(match.matchType) ? "text-red-500" : "text-yellow-500"
                     }`}
                   >
-                    {t.matchType[match.matchType]}
+                    {matchTypeLabel[match.matchType]}
                   </span>
                   <span className="text-small truncate text-black">
                     {match.title || t.untitled}

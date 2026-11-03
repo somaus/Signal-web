@@ -1,5 +1,6 @@
 import { api } from "@/shared/api/axios";
 import { guestHeaders } from "@/shared/api/guestHeaders";
+import type { WebMatchType } from "@/shared/lib/webMatch";
 
 export type ProcessingStatus = "PROCESSING" | "COMPLETED" | "FAILED";
 export type DeepfakeVerdict = "REAL" | "FAKE" | "SUSPICIOUS";
@@ -28,7 +29,6 @@ export interface EvidenceResponse {
 
 export type WebSearchStatus = "PROCESSING" | "COMPLETED" | "FAILED" | "UNAVAILABLE";
 export type WebSearchUnavailableReason = "VIDEO" | "OWNER_LIMIT" | "DAILY_LIMIT" | "MONTHLY_LIMIT";
-export type WebMatchType = "FULL" | "PARTIAL" | "PAGE" | "SIMILAR";
 
 export interface WebMatchResponse {
   pageUrl: string;
