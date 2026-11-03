@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import type { AnalysisResult } from "@/entities/analysis/model";
+import { SITE_URL } from "@/shared/config/site";
 import { translate } from "@/shared/i18n/currentLocale";
 import { uiMessages } from "@/shared/ui/messages";
 import { analysisShareMessages } from "./messages";
@@ -24,7 +25,7 @@ export async function shareAnalysisResult(result: AnalysisResult) {
   const text = buildShareText(result);
   if (navigator.share) {
     try {
-      await navigator.share({ title: t.title, text });
+      await navigator.share({ title: t.title, text, url: SITE_URL });
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
       toast.error(t.failed);
@@ -32,7 +33,9 @@ export async function shareAnalysisResult(result: AnalysisResult) {
     return;
   }
   try {
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(`${text}
+
+${SITE_URL}`);
     toast.success(t.copied);
   } catch {
     toast.error(t.copyFailed);
