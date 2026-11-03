@@ -208,7 +208,7 @@ export default function MonitoringPage() {
                   type="button"
                   onClick={() => setStopModalOpen(true)}
                   disabled={deleteMutation.isPending}
-                  className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-11 shrink-0 items-center justify-center rounded border px-4 transition-colors disabled:opacity-50 md:h-12 md:px-6"
+                  className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-11 shrink-0 cursor-pointer items-center justify-center rounded border px-4 transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:h-12 md:px-6"
                 >
                   {deleteMutation.isPending ? t.stopping : t.stop}
                 </button>
