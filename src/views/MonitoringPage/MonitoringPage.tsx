@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import {
   createMonitoring,
   deleteMonitoring,
+  getMonitoring,
   getMonitoringDetections,
 } from "@/entities/monitoring/api";
 import ImageArrowUp from "@/shared/asset/svg/ImageArrowUp";
@@ -22,13 +23,16 @@ import ConfirmModal from "@/shared/ui/ConfirmModal";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
-import { formatDateLong } from "@/shared/i18n/format";
+import { formatDateLong, formatDateTime } from "@/shared/i18n/format";
+import { isWebUrl } from "@/shared/lib/url";
+import { webMatchMessages } from "@/shared/lib/webMatch";
 import { monitoringMessages } from "./messages";
 
 const PAGE_SIZE = 9;
 
 export default function MonitoringPage() {
   const t = useT(monitoringMessages);
+  const matchTypeLabel = useT(webMatchMessages);
   const { locale } = useLocale();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -44,6 +48,12 @@ export default function MonitoringPage() {
   } = useQuery({
     queryKey: ["monitoringDetections", monitoringId, page],
     queryFn: () => getMonitoringDetections(monitoringId as number, page, PAGE_SIZE),
+    enabled: monitoringId !== null,
+  });
+
+  const { data: monitoring } = useQuery({
+    queryKey: ["monitoring", monitoringId],
+    queryFn: () => getMonitoring(monitoringId as number),
     enabled: monitoringId !== null,
   });
 
@@ -69,6 +79,7 @@ export default function MonitoringPage() {
       setMonitoringId(null);
       setPage(0);
       setStopModalOpen(false);
+      queryClient.removeQueries({ queryKey: ["monitoring"] });
       queryClient.removeQueries({ queryKey: ["monitoringDetections"] });
       toast.success(t.stopped);
     },
@@ -109,20 +120,20 @@ export default function MonitoringPage() {
 
   const detections = detectionPage?.content ?? [];
   const totalPages = detectionPage?.totalPages ?? 0;
+  const hasSimulated = detections.some((detection) => detection.simulated);
+  const hasRealResults = detections.some((detection) => !detection.simulated);
+  const isPaused = monitoring?.status === "PAUSED";
 
   return (
     <>
       <SiteHeader />
       <main className="flex w-full flex-col items-center bg-white px-5 py-6 pb-[120px] md:py-10">
         <div className="flex w-full max-w-[1280px] animate-[fade-in-up_0.5s_ease-out] flex-col gap-6 md:gap-8">
-          <div className="flex flex-col gap-3 md:gap-4">
-            <PageHeading
-              title={t.title}
-              description={t.description}
-              breadcrumbs={[{ label: t.title }]}
-            />
-            <p className="text-small md:text-body-2 break-keep text-gray-700">{t.demoNotice}</p>
-          </div>
+          <PageHeading
+            title={t.title}
+            description={t.description}
+            breadcrumbs={[{ label: t.title }]}
+          />
 
           {monitoringId === null ? (
             <div
@@ -142,6 +153,9 @@ export default function MonitoringPage() {
                 </p>
                 <p className="text-small md:text-body-2 text-gray-650">{t.fileTypes}</p>
               </div>
+              <p className="text-small max-w-[560px] text-center break-keep text-gray-700">
+                {t.externalNotice}
+              </p>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -161,16 +175,39 @@ export default function MonitoringPage() {
             </div>
           ) : (
             <>
-              <div className="bg-primary-50 flex items-center justify-between gap-4 rounded-2xl p-5 md:p-6">
-                <div className="flex flex-col gap-1">
+              <div
+                className={`flex items-center justify-between gap-4 rounded-2xl p-5 md:p-6 ${
+                  isPaused ? "bg-yellow-50" : "bg-primary-50"
+                }`}
+              >
+                <div className="flex min-w-0 flex-col gap-1">
                   <p className="text-small text-gray-700">{t.status}</p>
-                  <p className="text-large md:text-h3 font-semibold text-black">{t.monitoring}</p>
+                  <p
+                    className={`text-large md:text-h3 font-semibold ${
+                      isPaused ? "text-yellow-500" : "text-black"
+                    }`}
+                  >
+                    {isPaused ? t.paused : t.monitoring}
+                  </p>
+                  {isPaused && (
+                    <p className="text-small break-keep text-gray-700">{t.pausedDescription}</p>
+                  )}
+                  {monitoring?.lastSearchedAt && (
+                    <p className="text-caption text-gray-650">
+                      {t.lastSearched(formatDateTime(monitoring.lastSearchedAt, locale))}
+                    </p>
+                  )}
+                  {!isPaused && monitoring?.nextSearchAt && (
+                    <p className="text-caption text-gray-650">
+                      {t.nextSearch(formatDateTime(monitoring.nextSearchAt, locale))}
+                    </p>
+                  )}
                 </div>
                 <button
                   type="button"
                   onClick={() => setStopModalOpen(true)}
                   disabled={deleteMutation.isPending}
-                  className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-11 shrink-0 items-center justify-center rounded border px-4 transition-colors disabled:opacity-50 md:h-12 md:px-6"
+                  className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-11 shrink-0 cursor-pointer items-center justify-center rounded border px-4 transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:h-12 md:px-6"
                 >
                   {deleteMutation.isPending ? t.stopping : t.stop}
                 </button>
@@ -179,7 +216,12 @@ export default function MonitoringPage() {
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1 px-1">
                   <p className="text-large md:text-h3 font-semibold text-black">{t.resultsTitle}</p>
-                  <p className="text-small text-gray-700">{t.resultsDemo}</p>
+                  {hasSimulated && (
+                    <p className="text-small break-keep text-gray-700">{t.resultsDemo}</p>
+                  )}
+                  {hasRealResults && (
+                    <p className="text-small break-keep text-gray-700">{t.resultsNote}</p>
+                  )}
                 </div>
 
                 {isDetectionsPending && (
@@ -202,7 +244,7 @@ export default function MonitoringPage() {
                         className="flex min-w-0 flex-col gap-3 rounded-2xl border border-gray-300 p-3 md:p-4"
                       >
                         <div className="flex aspect-square size-full items-center justify-center overflow-hidden rounded-lg bg-gray-100">
-                          {detection.thumbnailUrl ? (
+                          {detection.simulated && detection.thumbnailUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={detection.thumbnailUrl}
@@ -215,16 +257,28 @@ export default function MonitoringPage() {
                             </span>
                           )}
                         </div>
-                        <div className="flex flex-col gap-1">
-                          {typeof detection.similarity === "number" && (
+                        <div className="flex min-w-0 flex-col gap-1">
+                          {(detection.matchType || detection.simulated) && (
                             <p className="text-body-2 md:text-body-1 font-semibold text-black">
-                              {t.similarity(Math.round(detection.similarity * 100))}
+                              {detection.matchType
+                                ? matchTypeLabel[detection.matchType]
+                                : t.simulatedBadge}
+                            </p>
+                          )}
+                          {detection.title && (
+                            <p className="text-small line-clamp-2 break-words text-gray-800">
+                              {detection.title}
+                            </p>
+                          )}
+                          {detection.sourceDomain && (
+                            <p className="text-caption text-gray-650 truncate">
+                              {detection.sourceDomain}
                             </p>
                           )}
                           <p className="text-small text-gray-700">
                             {formatDateLong(detection.detectedAt, locale)}
                           </p>
-                          {detection.sourceUrl && (
+                          {isWebUrl(detection.sourceUrl) && (
                             <a
                               href={detection.sourceUrl}
                               target="_blank"
