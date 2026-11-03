@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createRiskAssessment, type RiskAssessmentResponse } from "@/entities/analysis/api";
 import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
+import { shareAnalysisResult } from "@/features/analysis-share/shareAnalysisResult";
 import { ApiError } from "@/shared/api/axios";
 import { getAccessToken } from "@/shared/lib/authToken";
 import { pollUntil } from "@/shared/lib/poll";
@@ -185,7 +186,7 @@ export function useAnalyzeFlow() {
   }
 
   function handleShare() {
-    toast.success(t.flow.shareReady);
+    if (result) void shareAnalysisResult(result);
   }
 
   function handleSaveProtected() {
