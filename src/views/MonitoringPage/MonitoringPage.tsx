@@ -266,7 +266,7 @@ export default function MonitoringPage() {
                             </p>
                           )}
                           {detection.title && (
-                            <p className="text-small line-clamp-2 break-all text-gray-800">
+                            <p className="text-small line-clamp-2 break-words text-gray-800">
                               {detection.title}
                             </p>
                           )}
