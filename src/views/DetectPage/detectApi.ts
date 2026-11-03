@@ -26,6 +26,24 @@ export interface EvidenceResponse {
   frame?: number;
 }
 
+export type WebSearchStatus = "PROCESSING" | "COMPLETED" | "FAILED" | "UNAVAILABLE";
+export type WebSearchUnavailableReason = "VIDEO" | "OWNER_LIMIT" | "DAILY_LIMIT" | "MONTHLY_LIMIT";
+export type WebMatchType = "FULL" | "PARTIAL" | "PAGE" | "SIMILAR";
+
+export interface WebMatchResponse {
+  pageUrl: string;
+  domain?: string | null;
+  title?: string | null;
+  matchType: WebMatchType;
+}
+
+export interface WebSearchResponse {
+  status: WebSearchStatus;
+  unavailableReason?: WebSearchUnavailableReason | null;
+  matchCount: number;
+  matches: WebMatchResponse[];
+}
+
 export interface ProvenanceSignalResponse {
   code: string;
   message?: string;
@@ -55,6 +73,7 @@ export interface DeepfakeDetectionResponse {
   modelName?: string | null;
   modelVersion?: string | null;
   provenanceSignals?: ProvenanceSignalResponse[];
+  webSearch?: WebSearchResponse | null;
 }
 
 export function isDeepfakeBand(value: string | null | undefined): value is DeepfakeBand {
@@ -79,6 +98,15 @@ export async function getDeepfakeDetection(
 ): Promise<DeepfakeDetectionResponse> {
   const { data } = await api.get<DeepfakeDetectionResponse>(
     `/api/v1/deepfake-detections/${detectionId}`,
+    { headers: guestHeaders() },
+  );
+  return data;
+}
+
+export async function startWebSearch(detectionId: number): Promise<WebSearchResponse> {
+  const { data } = await api.post<WebSearchResponse>(
+    `/api/v1/deepfake-detections/${detectionId}/web-search`,
+    undefined,
     { headers: guestHeaders() },
   );
   return data;
