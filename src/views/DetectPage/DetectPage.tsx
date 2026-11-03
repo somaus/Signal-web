@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import AnalysisGuideCard from "@/shared/ui/AnalysisGuideCard";
 import Button from "@/shared/ui/Button";
 import PageHeading from "@/shared/ui/PageHeading";
+import { ApiError } from "@/shared/api/axios";
 import { pollUntil } from "@/shared/lib/poll";
 import { scrollToElement } from "@/shared/lib/scrollToElement";
 import Footer from "@/widgets/Footer";
@@ -14,9 +15,11 @@ import {
   createDeepfakeDetection,
   getDeepfakeDetection,
   isDeepfakeBand,
+  startWebSearch,
   type DeepfakeBand,
   type DeepfakeDetectionResponse,
   type DeepfakeVerdict,
+  type WebSearchResponse,
 } from "./detectApi";
 import DetectResultSection from "./DetectResultSection";
 import DetectUploadCard from "./DetectUploadCard";
@@ -25,6 +28,8 @@ import type { DetectResult, DetectStatus } from "./types";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { detectMessages } from "./messages";
 import { getWebSearchOutcome, raiseBand, type WebSearchOutcome } from "./webSearchOutcome";
+
+const WEB_SEARCH_POLL = { intervalMs: 3000, timeoutMs: 330_000 };
 
 const verdictBand: Record<DeepfakeVerdict, DeepfakeBand> = {
   REAL: "LOW",
@@ -113,10 +118,6 @@ function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectRes
     fallbackUsed: data.fallbackUsed ?? false,
     modelLabel: data.modelName ? t.modelLabel(data.modelName, data.modelVersion ?? null) : null,
     evidenceHighlights: mapEvidenceHighlights(data, t),
-    faceTheftVerdict: t.comingSoon,
-    faceTheftScore: 0,
-    faceTheftCaption: t.faceTheftCaption,
-    webMatchCount: 0,
   };
 }
 
@@ -126,6 +127,7 @@ export default function DetectPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [detection, setDetection] = useState<DeepfakeDetectionResponse | null>(null);
+  const [webSearchOff, setWebSearchOff] = useState(false);
   const result: DetectResult = detection ? mapDetection(detection, t) : MOCK_RESULT;
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -153,6 +155,33 @@ export default function DetectPage() {
     setStatus("idle");
   }
 
+  const webSearchMutation = useMutation({
+    mutationFn: async (detectionId: number): Promise<WebSearchResponse> => {
+      const started = await startWebSearch(detectionId);
+      if (started.status !== "PROCESSING") return started;
+      const latest = await pollUntil(
+        () => getDeepfakeDetection(detectionId),
+        (polled) => polled.webSearch?.status !== "PROCESSING",
+        WEB_SEARCH_POLL,
+      );
+      return latest.webSearch ?? started;
+    },
+    onSuccess: (webSearch, detectionId) => {
+      setDetection((prev) =>
+        prev && prev.detectionId === detectionId ? { ...prev, webSearch } : prev,
+      );
+    },
+    onError: (error) => {
+      if (error instanceof ApiError && error.code === "NOT_FOUND") {
+        setWebSearchOff(true);
+        return;
+      }
+      toast.error(t.webSearch.failed, {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
+
   const detectMutation = useMutation({
     mutationFn: async () => {
       if (!selectedFile) throw new Error(t.selectFile);
@@ -172,6 +201,8 @@ export default function DetectPage() {
         return;
       }
       setDetection(data);
+      setWebSearchOff(false);
+      webSearchMutation.reset();
       setStatus("result");
     },
     onError: (error) => {
@@ -181,6 +212,11 @@ export default function DetectPage() {
       });
     },
   });
+
+  function handleWebSearch() {
+    if (!detection || webSearchMutation.isPending) return;
+    webSearchMutation.mutate(detection.detectionId);
+  }
 
   function handleDetect() {
     setStatus("analyzing");
@@ -224,7 +260,14 @@ export default function DetectPage() {
 
           {status === "result" && (
             <div ref={resultRef} className="w-full">
-              <DetectResultSection result={result} previewUrl={previewUrl} />
+              <DetectResultSection
+                result={result}
+                previewUrl={previewUrl}
+                webSearch={detection?.webSearch ?? null}
+                webSearchOff={webSearchOff}
+                webSearchPending={webSearchMutation.isPending}
+                onWebSearch={handleWebSearch}
+              />
             </div>
           )}
         </div>

@@ -1,9 +1,6 @@
 import type { DetectResult } from "./types";
 
 export const MOCK_RESULT: DetectResult = {
-  faceTheftVerdict: "도용 의심",
-  faceTheftScore: 80,
-  faceTheftCaption: "공개 웹에서 유사 얼굴이 감지되었습니다.",
   deepfakeVerdict: "합성 흔적 발견",
   deepfakeRiskScore: 80,
   deepfakeTone: "FAKE",
@@ -40,5 +37,4 @@ export const MOCK_RESULT: DetectResult = {
       description: "얼굴과 배경의 조명 방향이 서로 일치하지 않습니다.",
     },
   ],
-  webMatchCount: 12,
 };
