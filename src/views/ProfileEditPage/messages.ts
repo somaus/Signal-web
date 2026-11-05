@@ -26,10 +26,11 @@ export const profileMessages = defineMessages(
     saving: "저장 중...",
     save: "변경사항 저장",
     withdrawTitle: "회원 탈퇴",
-    withdrawDescription: "탈퇴하면 저장된 정보와 이용 내역이 삭제됩니다.",
+    withdrawDescription:
+      "탈퇴하면 계정 정보와 업로드한 사진·영상, 분석·탐지·상담·신고 기록이 삭제됩니다.",
     withdrawConfirmTitle: "정말 탈퇴하시겠습니까?",
     withdrawConfirmDescription:
-      "탈퇴하면 저장된 정보와 이용 내역이 모두 삭제되며 되돌릴 수 없습니다.",
+      "탈퇴하면 계정 정보와 업로드한 사진·영상, 분석·탐지·상담·신고 기록이 모두 삭제되며 되돌릴 수 없습니다.",
     withdrawConfirm: "탈퇴하기",
   },
   {
@@ -58,10 +59,11 @@ export const profileMessages = defineMessages(
       saving: "Saving...",
       save: "Save changes",
       withdrawTitle: "Delete account",
-      withdrawDescription: "Deleting your account removes your saved information and history.",
+      withdrawDescription:
+        "Deleting your account removes your account information, uploaded photos and videos, and your analysis, detection, chat, and report history.",
       withdrawConfirmTitle: "Are you sure you want to delete your account?",
       withdrawConfirmDescription:
-        "All your saved information and history will be deleted and can't be restored.",
+        "Your account information, uploaded photos and videos, and your analysis, detection, chat, and report history will all be deleted and can't be restored.",
       withdrawConfirm: "Delete account",
     },
     ja: {
@@ -89,10 +91,11 @@ export const profileMessages = defineMessages(
       saving: "保存中...",
       save: "変更内容を保存",
       withdrawTitle: "退会",
-      withdrawDescription: "退会すると保存された情報と利用履歴が削除されます。",
+      withdrawDescription:
+        "退会すると、アカウント情報とアップロードした写真・動画、分析・検出・相談・通報の記録が削除されます。",
       withdrawConfirmTitle: "本当に退会しますか？",
       withdrawConfirmDescription:
-        "退会すると保存された情報と利用履歴がすべて削除され、元に戻せません。",
+        "退会すると、アカウント情報とアップロードした写真・動画、分析・検出・相談・通報の記録がすべて削除され、元に戻せません。",
       withdrawConfirm: "退会する",
     },
     zh: {
@@ -120,9 +123,11 @@ export const profileMessages = defineMessages(
       saving: "正在保存...",
       save: "保存修改",
       withdrawTitle: "注销账号",
-      withdrawDescription: "注销后，已保存的信息和使用记录将被删除。",
+      withdrawDescription:
+        "注销后，账号信息、上传的照片和视频以及分析、检测、咨询、举报记录将被删除。",
       withdrawConfirmTitle: "确定要注销吗？",
-      withdrawConfirmDescription: "注销后，所有已保存的信息和使用记录都将被删除且无法恢复。",
+      withdrawConfirmDescription:
+        "注销后，账号信息、上传的照片和视频以及分析、检测、咨询、举报记录都将被删除且无法恢复。",
       withdrawConfirm: "注销",
     },
   },
