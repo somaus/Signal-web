@@ -19,7 +19,8 @@ export interface BoundingBoxResponse {
 
 export interface FaceResponse {
   index: number;
-  boundingBox: BoundingBoxResponse;
+  boundingBox: BoundingBoxResponse | null;
+  positionKnown?: boolean;
 }
 
 export interface RiskAssessmentResponse {
