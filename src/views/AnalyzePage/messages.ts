@@ -59,7 +59,6 @@ export const analyzeMessages = defineMessages(
       saved: "보호본을 저장했습니다.",
       saveFailed: "보호본 저장에 실패했습니다.",
       saveLoginOnly: "보호본 저장은 로그인 후 이용할 수 있어요.",
-      shareReady: "SNS 공유 링크를 준비했습니다.",
     },
   },
   {
@@ -121,7 +120,6 @@ export const analyzeMessages = defineMessages(
         saved: "Protected copy saved.",
         saveFailed: "Couldn't save the protected copy.",
         saveLoginOnly: "Log in to save protected copies.",
-        shareReady: "Share link is ready.",
       },
     },
     ja: {
@@ -182,7 +180,6 @@ export const analyzeMessages = defineMessages(
         saved: "保護版を保存しました。",
         saveFailed: "保護版の保存に失敗しました。",
         saveLoginOnly: "保護版の保存はログイン後にご利用いただけます。",
-        shareReady: "SNS共有リンクを用意しました。",
       },
     },
     zh: {
@@ -241,7 +238,6 @@ export const analyzeMessages = defineMessages(
         saved: "保护版已保存。",
         saveFailed: "保护版保存失败。",
         saveLoginOnly: "登录后才能保存保护版。",
-        shareReady: "分享链接已准备好。",
       },
     },
   },

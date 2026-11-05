@@ -2,9 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { toast } from "sonner";
 import { getAssessment } from "@/entities/analysis/api";
-import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
+import { mapAssessment } from "@/entities/analysis/model";
+import { shareAnalysisResult } from "@/features/analysis-share/shareAnalysisResult";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Share from "@/shared/asset/svg/Share";
 import BackButton from "@/shared/ui/BackButton";
@@ -19,46 +19,10 @@ import RiskFactorList from "./RiskFactorList";
 import RiskLevelCard from "./RiskLevelCard";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { resultMessages } from "./messages";
-import { translate } from "@/shared/i18n/currentLocale";
 import { uiMessages } from "@/shared/ui/messages";
 
 interface AnalysisResultDetailPageProps {
   id: string;
-}
-
-function buildShareText(result: AnalysisResult) {
-  const t = translate(resultMessages);
-  const level = translate(uiMessages).riskLevel[result.level];
-  const topFactors = [...result.factors]
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
-    .map((factor) => `- ${factor.title} ${factor.score}%`);
-  return [
-    t.shareHeading,
-    t.shareRisk(level, result.score),
-    result.description.replace(/\n/g, " "),
-    ...(topFactors.length > 0 ? ["", t.shareTopFactors, ...topFactors] : []),
-  ].join("\n");
-}
-
-async function shareResult(result: AnalysisResult) {
-  const t = translate(resultMessages);
-  const text = buildShareText(result);
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: t.shareTitle, text });
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
-      toast.error(t.shareFailed);
-    }
-    return;
-  }
-  try {
-    await navigator.clipboard.writeText(text);
-    toast.success(t.copied);
-  } catch {
-    toast.error(t.copyFailed);
-  }
 }
 
 export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPageProps) {
@@ -84,7 +48,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
   return (
     <>
       <SiteHeader className="max-md:hidden print:hidden" />
-      <ResultMobileHeader onShare={result ? () => shareResult(result) : undefined} />
+      <ResultMobileHeader onShare={result ? () => shareAnalysisResult(result) : undefined} />
       <main
         className={`flex w-full flex-col items-center bg-gray-100 px-5 py-5 md:bg-white md:py-10 md:pb-[120px] ${
           result ? "max-md:pb-[184px]" : "max-md:pb-10"
@@ -113,7 +77,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
               {result && (
                 <button
                   type="button"
-                  onClick={() => shareResult(result)}
+                  onClick={() => shareAnalysisResult(result)}
                   className="text-body-2 text-primary-500 border-primary-500 hover:bg-primary-50 flex h-[50px] shrink-0 cursor-pointer items-center gap-2 rounded border px-5 transition-colors print:hidden [&>svg]:h-4 [&>svg]:w-3.5"
                 >
                   <Share />
