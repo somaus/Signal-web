@@ -88,7 +88,7 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
       },
       {
         title: "제4조 (보유 및 이용 기간)",
-        body: "회원 정보는 회원 탈퇴 시까지 보관하며, 관계 법령에 따라 보관이 필요한 경우 해당 기간 동안 안전하게 보관합니다. 다만 현재는 업로드한 사진·영상과 분석·탐지·상담·신고 기록이 탈퇴 후에도 서버에 남을 수 있으며, 자세한 내용은 개인정보처리방침의 '보유 및 이용 기간'과 '상담 및 분석 데이터 처리' 항목을 따릅니다.",
+        body: "회원 정보는 회원 탈퇴 시까지 보관하며, 탈퇴하면 업로드한 사진·영상과 분석·탐지·상담·신고 기록도 함께 삭제합니다. 관계 법령에 따라 보관이 필요한 경우 해당 기간 동안 안전하게 보관하며, 자세한 내용은 개인정보처리방침의 '보유 및 이용 기간'과 '상담 및 분석 데이터 처리' 항목을 따릅니다.",
       },
       {
         title: "제5조 (개인정보 보호)",
@@ -177,7 +177,7 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
         },
         {
           title: "Article 4 (Retention period)",
-          body: "Account information is kept until you delete your account. Where applicable laws require retention, it is stored securely for the required period. However, uploaded photos and videos and your analysis, detection, chat, and report records may currently remain on our servers after you delete your account. See 'Retention and use period' and 'Handling of chat and analysis data' in the Privacy Policy for details.",
+          body: "Account information is kept until you delete your account. When you do, your uploaded photos and videos and your analysis, detection, chat, and report records are deleted as well. Where applicable laws require retention, it is stored securely for the required period. See 'Retention and use period' and 'Handling of chat and analysis data' in the Privacy Policy for details.",
         },
         {
           title: "Article 5 (Protection of personal information)",
@@ -265,7 +265,7 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
         },
         {
           title: "第4条（保有および利用期間）",
-          body: "会員情報は退会するまで保管し、関係法令により保管が必要な場合は、その期間中安全に保管します。ただし現在、アップロードされた写真・動画と分析・検出・相談・通報の記録は、退会後もサーバーに残る場合があります。詳しくはプライバシーポリシーの「保有および利用期間」と「相談・分析データの取り扱い」に従います。",
+          body: "会員情報は退会するまで保管し、退会するとアップロードされた写真・動画と分析・検出・相談・通報の記録も一緒に削除します。関係法令により保管が必要な場合は、その期間中安全に保管します。詳しくはプライバシーポリシーの「保有および利用期間」と「相談・分析データの取り扱い」に従います。",
         },
         {
           title: "第5条（個人情報の保護）",
@@ -349,7 +349,7 @@ export const legalSummaryMessages = defineMessages<LegalSummaryText>(
         },
         {
           title: "第四条（保存及使用期限）",
-          body: "会员信息保存至注销账号为止；如相关法律法规要求保存，将在规定期限内安全保存。但目前，上传的照片和视频以及分析、检测、咨询、举报记录在注销账号后仍可能保留在服务器上。详情请参阅隐私政策中的“保存及使用期限”和“咨询与分析数据的处理”。",
+          body: "会员信息保存至注销账号为止，注销后上传的照片和视频以及分析、检测、咨询、举报记录也会一并删除。如相关法律法规要求保存，将在规定期限内安全保存。详情请参阅隐私政策中的“保存及使用期限”和“咨询与分析数据的处理”。",
         },
         {
           title: "第五条（个人信息保护）",
