@@ -27,6 +27,7 @@ import { MOCK_RESULT } from "./mockResult";
 import type { DetectResult, DetectStatus } from "./types";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { detectMessages } from "./messages";
+import { exceedsUploadLimit } from "./uploadLimit";
 import { getWebSearchOutcome, raiseBand, type WebSearchOutcome } from "./webSearchOutcome";
 
 const WEB_SEARCH_POLL = { intervalMs: 3000, timeoutMs: 330_000 };
@@ -147,7 +148,11 @@ export default function DetectPage() {
     return scrollToElement(resultRef.current);
   }, [status]);
 
-  function handleFileSelect(file: File) {
+  async function handleFileSelect(file: File) {
+    if (await exceedsUploadLimit(file)) {
+      toast.error(t.fileTooLarge.title, { description: t.fileTooLarge.description });
+      return;
+    }
     setPreviewUrl(URL.createObjectURL(file));
     setSelectedFile(file);
     setStatus("selected");
