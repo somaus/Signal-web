@@ -4,7 +4,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { createRiskAssessment, type RiskAssessmentResponse } from "@/entities/analysis/api";
+import {
+  createRiskAssessment,
+  getAssessment,
+  type RiskAssessmentResponse,
+} from "@/entities/analysis/api";
 import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
 import { shareAnalysisResult } from "@/features/analysis-share/shareAnalysisResult";
 import { ApiError } from "@/shared/api/axios";
@@ -25,6 +29,8 @@ function needsLogin(error: unknown) {
   );
 }
 
+const ASSESSMENT_POLL = { intervalMs: 1500, timeoutMs: 120_000 };
+
 export function useAnalyzeFlow() {
   const t = useT(analyzeMessages);
   const { locale } = useLocale();
@@ -36,9 +42,7 @@ export function useAnalyzeFlow() {
   const [selectedFile, setSelectedFile] = useState<File | null>(initial.selectedFile);
   const [showDetails, setShowDetails] = useState(initial.showDetails);
   const [isProtected, setIsProtected] = useState(initial.isProtected);
-  const [isSimulatedProtection, setIsSimulatedProtection] = useState(
-    initial.isSimulatedProtection,
-  );
+  const [isSimulatedProtection, setIsSimulatedProtection] = useState(initial.isSimulatedProtection);
   const [assessment, setAssessment] = useState<RiskAssessmentResponse | null>(initial.assessment);
   const result: AnalysisResult | null = assessment ? mapAssessment(assessment, locale) : null;
   const [assessmentId, setAssessmentId] = useState<number | null>(initial.assessmentId);
@@ -107,12 +111,24 @@ export function useAnalyzeFlow() {
   }
 
   const analyzeMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       if (!selectedFile) throw new Error(t.flow.selectImage);
-      return createRiskAssessment(selectedFile);
+      const created = await createRiskAssessment(selectedFile);
+      if (created.status !== "PROCESSING") return created;
+      return pollUntil(
+        () => getAssessment(created.assessmentId),
+        (polled) => polled.status !== "PROCESSING",
+        ASSESSMENT_POLL,
+      );
     },
     onSuccess: (data) => {
-      if (!data.faceDetected) {
+      if (data.status === "FAILED" && data.failureReason !== "NO_FACE_DETECTED") {
+        setStatus("selected");
+        const reason = data.failureReason ? t.flow.failure[data.failureReason] : undefined;
+        toast.error(t.flow.analyzeFailed, { description: reason ?? t.flow.retry });
+        return;
+      }
+      if (data.status === "FAILED" || !data.faceDetected) {
         setStatus("error");
         return;
       }
