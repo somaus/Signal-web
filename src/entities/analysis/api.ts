@@ -17,10 +17,9 @@ export interface BoundingBoxResponse {
   height: number;
 }
 
-export interface FaceResponse {
-  index: number;
-  boundingBox: BoundingBoxResponse;
-}
+export type FaceResponse =
+  | { index: number; positionKnown?: true; boundingBox: BoundingBoxResponse }
+  | { index: number; positionKnown: false; boundingBox: null };
 
 export interface RiskAssessmentResponse {
   assessmentId: number;
