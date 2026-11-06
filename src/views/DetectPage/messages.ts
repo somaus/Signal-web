@@ -175,8 +175,6 @@ export const detectMessages = defineMessages(
       report: "신고 문서 작성하기",
       evidenceTitle: "AI 판단 근거 하이라이트",
       overall: "종합 위험도",
-      overallScoreLabel: (score: number | null) =>
-        score === null ? "종합 위험도: 점수 없음" : `종합 위험도 ${score}점`,
       confidence: "모델 판단 신뢰도",
       unsupported: "준비 중인 기능입니다",
       webTitle: "도용 의심 이미지 (웹 검색 결과)",
@@ -345,8 +343,6 @@ export const detectMessages = defineMessages(
         report: "Write a report",
         evidenceTitle: "AI evidence highlights",
         overall: "Overall risk",
-        overallScoreLabel: (score) =>
-          score === null ? "Overall risk: no score" : `Overall risk ${score} out of 100`,
         confidence: "Model confidence",
         unsupported: "This feature is coming soon",
         webTitle: "Possible stolen images (web search)",
@@ -514,8 +510,6 @@ export const detectMessages = defineMessages(
         report: "通報書類を作成する",
         evidenceTitle: "AI判断根拠のハイライト",
         overall: "総合危険度",
-        overallScoreLabel: (score) =>
-          score === null ? "総合危険度: スコアなし" : `総合危険度 ${score}点`,
         confidence: "モデルの判断信頼度",
         unsupported: "準備中の機能です",
         webTitle: "盗用の疑いがある画像（Web検索結果）",
@@ -669,7 +663,6 @@ export const detectMessages = defineMessages(
         report: "撰写举报文件",
         evidenceTitle: "AI判断依据要点",
         overall: "综合风险",
-        overallScoreLabel: (score) => (score === null ? "综合风险：无分数" : `综合风险 ${score}分`),
         confidence: "模型判断可信度",
         unsupported: "该功能即将推出",
         webTitle: "疑似被盗用的图片（网络搜索结果）",
