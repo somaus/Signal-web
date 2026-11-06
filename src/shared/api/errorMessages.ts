@@ -96,8 +96,7 @@ export const errorMessages = defineMessages<ErrorText>(
         VERIFICATION_TOO_FREQUENT: "Too many code requests. Please try again shortly.",
         FACE_NOT_DETECTED: "We couldn't find a face in the photo.",
         ANALYSIS_UNAVAILABLE: "Analysis isn't available right now. Please try again shortly.",
-        ANONYMOUS_ID_REQUIRED:
-          "We couldn't identify your guest session. Please refresh and try again.",
+        ANONYMOUS_ID_REQUIRED: "We couldn't identify your guest session. Please refresh and try again.",
         ANONYMOUS_DETECTION_LIMIT_EXCEEDED:
           "You've used all guest detections. Log in to keep using this feature.",
         ANONYMOUS_RISK_ASSESSMENT_LIMIT_EXCEEDED:
@@ -135,7 +134,8 @@ export const errorMessages = defineMessages<ErrorText>(
         VERIFICATION_TOO_FREQUENT:
           "認証コードのリクエストが多すぎます。しばらくしてからもう一度お試しください。",
         FACE_NOT_DETECTED: "写真から顔を検出できませんでした。",
-        ANALYSIS_UNAVAILABLE: "現在、分析を行えません。しばらくしてからもう一度お試しください。",
+        ANALYSIS_UNAVAILABLE:
+          "現在、分析を行えません。しばらくしてからもう一度お試しください。",
         ANONYMOUS_ID_REQUIRED:
           "ゲスト情報を確認できません。ページを再読み込みしてもう一度お試しください。",
         ANONYMOUS_DETECTION_LIMIT_EXCEEDED:
