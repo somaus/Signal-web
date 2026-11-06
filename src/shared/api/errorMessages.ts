@@ -26,7 +26,8 @@ export type ApiErrorCode =
   | "ANONYMOUS_CHAT_LIMIT_EXCEEDED"
   | "PROTECTION_NOT_READY"
   | "REQUIRED_FIELD_MISSING"
-  | "REPORT_ALREADY_FINALIZED";
+  | "REPORT_ALREADY_FINALIZED"
+  | "WEB_SEARCH_DISABLED";
 
 interface ErrorText {
   codes: Record<ApiErrorCode, string>;
@@ -67,6 +68,7 @@ export const errorMessages = defineMessages<ErrorText>(
       PROTECTION_NOT_READY: "보호 처리가 아직 끝나지 않았습니다. 잠시 후 다시 시도해 주세요.",
       REQUIRED_FIELD_MISSING: "필수 항목을 입력해 주세요.",
       REPORT_ALREADY_FINALIZED: "이미 완료된 신고 문서는 수정할 수 없습니다.",
+      WEB_SEARCH_DISABLED: "웹 검색은 아직 준비 중인 기능입니다.",
     },
     timeout: "응답이 늦어지고 있습니다. 잠시 후 다시 시도해 주세요.",
     network: "네트워크 연결을 확인해 주세요.",
@@ -104,6 +106,7 @@ export const errorMessages = defineMessages<ErrorText>(
         PROTECTION_NOT_READY: "Image protection isn't finished yet. Please try again shortly.",
         REQUIRED_FIELD_MISSING: "Please fill in the required fields.",
         REPORT_ALREADY_FINALIZED: "A finalized report document can't be edited.",
+        WEB_SEARCH_DISABLED: "Web search is coming soon.",
       },
       timeout: "The response is taking too long. Please try again shortly.",
       network: "Please check your network connection.",
@@ -145,6 +148,7 @@ export const errorMessages = defineMessages<ErrorText>(
           "保護処理がまだ完了していません。しばらくしてからもう一度お試しください。",
         REQUIRED_FIELD_MISSING: "必須項目を入力してください。",
         REPORT_ALREADY_FINALIZED: "完了した通報書類は編集できません。",
+        WEB_SEARCH_DISABLED: "Web検索は準備中の機能です。",
       },
       timeout: "応答に時間がかかっています。しばらくしてからもう一度お試しください。",
       network: "ネットワーク接続をご確認ください。",
@@ -178,6 +182,7 @@ export const errorMessages = defineMessages<ErrorText>(
         PROTECTION_NOT_READY: "保护处理尚未完成，请稍后重试。",
         REQUIRED_FIELD_MISSING: "请填写必填项。",
         REPORT_ALREADY_FINALIZED: "已完成的举报文件无法修改。",
+        WEB_SEARCH_DISABLED: "网络搜索功能即将推出。",
       },
       timeout: "响应时间过长，请稍后重试。",
       network: "请检查网络连接。",
