@@ -132,6 +132,7 @@ export default function DetectPage() {
   const result: DetectResult = detection ? mapDetection(detection, t) : MOCK_RESULT;
   const resultRef = useRef<HTMLDivElement>(null);
   const webSearchAbortRef = useRef<AbortController | null>(null);
+  const fileSelectRequestRef = useRef(0);
 
   useEffect(() => {
     return () => webSearchAbortRef.current?.abort();
@@ -149,7 +150,10 @@ export default function DetectPage() {
   }, [status]);
 
   async function handleFileSelect(file: File) {
-    if (await exceedsUploadLimit(file)) {
+    const requestId = ++fileSelectRequestRef.current;
+    const tooLarge = await exceedsUploadLimit(file);
+    if (requestId !== fileSelectRequestRef.current) return;
+    if (tooLarge) {
       toast.error(t.fileTooLarge.title, { description: t.fileTooLarge.description });
       return;
     }
@@ -165,6 +169,7 @@ export default function DetectPage() {
   }
 
   function handleReset() {
+    fileSelectRequestRef.current += 1;
     cancelWebSearch();
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
