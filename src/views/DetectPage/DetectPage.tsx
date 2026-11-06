@@ -188,7 +188,7 @@ export default function DetectPage() {
     },
     onError: (error) => {
       if (isAbortError(error)) return;
-      if (error instanceof ApiError && error.code === "NOT_FOUND") {
+      if (error instanceof ApiError && error.code === "WEB_SEARCH_DISABLED") {
         setWebSearchOff(true);
         return;
       }
@@ -280,7 +280,7 @@ export default function DetectPage() {
                 result={result}
                 previewUrl={previewUrl}
                 webSearch={detection?.webSearch ?? null}
-                webSearchOff={webSearchOff}
+                webSearchOff={webSearchOff || detection?.webSearchAvailable === false}
                 webSearchPending={webSearchMutation.isPending}
                 onWebSearch={handleWebSearch}
               />
