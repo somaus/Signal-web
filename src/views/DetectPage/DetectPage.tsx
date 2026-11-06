@@ -100,7 +100,8 @@ function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectRes
   const riskScore = data.riskScore ?? null;
   const caption = band ? bandCaption(data, band, t) : t.verdictCaption[verdict];
   const webOutcome = getWebSearchOutcome(data.webSearch);
-  const overallBand = webOutcome === "FOUND" ? raiseBand(band ?? verdictBand[verdict]) : band;
+  const deepfakeLevel = band ?? verdictBand[verdict];
+  const overallBand = webOutcome === "FOUND" ? raiseBand(deepfakeLevel) : deepfakeLevel;
 
   return {
     ...MOCK_RESULT,
@@ -109,7 +110,6 @@ function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectRes
     deepfakeTone: verdict,
     deepfakeBand: band,
     deepfakeCaption: caption,
-    overallScore: riskScore,
     overallCaption: caption,
     overallBand,
     overallWebNote: t.overallWebNote[overallWebNoteKey[webOutcome]],

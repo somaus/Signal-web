@@ -10,9 +10,8 @@ export interface DetectResult {
   deepfakeTone?: DeepfakeVerdict;
   deepfakeBand: DeepfakeBand | null;
   deepfakeCaption: string;
-  overallScore: number | null;
   overallCaption: string;
-  overallBand: DeepfakeBand | null;
+  overallBand: DeepfakeBand;
   overallWebNote: string;
   modelConfidence: number;
   modelConfidenceNote: string;
