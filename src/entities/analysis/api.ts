@@ -2,6 +2,7 @@ import { api } from "@/shared/api/axios";
 import { guestHeaders } from "@/shared/api/guestHeaders";
 
 export type RiskLevel = "HIGH" | "MEDIUM" | "LOW";
+export type AssessmentStatus = "PROCESSING" | "COMPLETED" | "FAILED";
 
 export interface RiskFactorResponse {
   type: string;
@@ -32,6 +33,8 @@ export interface RiskAssessmentResponse {
   faces: FaceResponse[];
   /** true면 실제 AI 분석이 아니라 서버가 자동으로 대체한 참고용 추정치(폴백)입니다. */
   fallbackUsed: boolean;
+  status?: AssessmentStatus;
+  failureReason?: string | null;
 }
 
 export async function createRiskAssessment(file: File): Promise<RiskAssessmentResponse> {

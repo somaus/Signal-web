@@ -2,14 +2,18 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { createRiskAssessment, type RiskAssessmentResponse } from "@/entities/analysis/api";
+import {
+  createRiskAssessment,
+  getAssessment,
+  type RiskAssessmentResponse,
+} from "@/entities/analysis/api";
 import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
 import { shareAnalysisResult } from "@/features/analysis-share/shareAnalysisResult";
 import { ApiError } from "@/shared/api/axios";
 import { getAccessToken } from "@/shared/lib/authToken";
-import { pollUntil } from "@/shared/lib/poll";
+import { isAbortError, pollUntil } from "@/shared/lib/poll";
 import { createProtection, downloadProtection, getProtection } from "./analyzeApi";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { analyzeMessages } from "./messages";
@@ -24,6 +28,8 @@ function needsLogin(error: unknown) {
     (error.code === "UNAUTHORIZED" || error.code === "ANONYMOUS_ID_REQUIRED")
   );
 }
+
+const ASSESSMENT_POLL = { intervalMs: 1500, timeoutMs: 120_000 };
 
 export function useAnalyzeFlow() {
   const t = useT(analyzeMessages);
@@ -43,6 +49,11 @@ export function useAnalyzeFlow() {
   const result: AnalysisResult | null = assessment ? mapAssessment(assessment, locale) : null;
   const [assessmentId, setAssessmentId] = useState<number | null>(initial.assessmentId);
   const [protectionId, setProtectionId] = useState<number | null>(initial.protectionId);
+  const analyzeAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => analyzeAbortRef.current?.abort();
+  }, []);
 
   useEffect(() => {
     saveAnalyzeSession({
@@ -80,7 +91,13 @@ export function useAnalyzeFlow() {
     });
   }
 
+  function cancelAnalysis() {
+    analyzeAbortRef.current?.abort();
+    analyzeAbortRef.current = null;
+  }
+
   function handleFileSelect(file: File) {
+    cancelAnalysis();
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(URL.createObjectURL(file));
     setSelectedFile(file);
@@ -94,6 +111,7 @@ export function useAnalyzeFlow() {
   }
 
   function handleReset() {
+    cancelAnalysis();
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
     setSelectedFile(null);
@@ -107,12 +125,28 @@ export function useAnalyzeFlow() {
   }
 
   const analyzeMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       if (!selectedFile) throw new Error(t.flow.selectImage);
-      return createRiskAssessment(selectedFile);
+      cancelAnalysis();
+      const controller = new AbortController();
+      analyzeAbortRef.current = controller;
+      const created = await createRiskAssessment(selectedFile);
+      if (controller.signal.aborted) throw new DOMException("Analysis aborted", "AbortError");
+      if (created.status !== "PROCESSING") return created;
+      return pollUntil(
+        () => getAssessment(created.assessmentId),
+        (polled) => polled.status !== "PROCESSING",
+        { ...ASSESSMENT_POLL, signal: controller.signal },
+      );
     },
     onSuccess: (data) => {
-      if (!data.faceDetected) {
+      if (data.status === "FAILED" && data.failureReason !== "NO_FACE_DETECTED") {
+        setStatus("selected");
+        const reason = data.failureReason ? t.flow.failure[data.failureReason] : undefined;
+        toast.error(t.flow.analyzeFailed, { description: reason ?? t.flow.retry });
+        return;
+      }
+      if (data.status === "FAILED" || !data.faceDetected) {
         setStatus("error");
         return;
       }
@@ -123,6 +157,7 @@ export function useAnalyzeFlow() {
       setStatus("result");
     },
     onError: (error) => {
+      if (isAbortError(error)) return;
       setStatus("selected");
       showError(t.flow.analyzeFailed, error, t.flow.loginAndRetry);
     },
