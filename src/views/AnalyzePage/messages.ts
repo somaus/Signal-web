@@ -59,6 +59,11 @@ export const analyzeMessages = defineMessages(
       saved: "보호본을 저장했습니다.",
       saveFailed: "보호본 저장에 실패했습니다.",
       saveLoginOnly: "보호본 저장은 로그인 후 이용할 수 있어요.",
+      retry: "잠시 후 다시 시도해 주세요.",
+      failure: {
+        AI_SERVER_ERROR: "AI 분석 서버에 일시적인 문제가 있어요. 잠시 후 다시 시도해 주세요.",
+        TIMEOUT: "분석 시간이 초과되었어요. 잠시 후 다시 시도해 주세요.",
+      } as Record<string, string>,
     },
   },
   {
@@ -120,6 +125,12 @@ export const analyzeMessages = defineMessages(
         saved: "Protected copy saved.",
         saveFailed: "Couldn't save the protected copy.",
         saveLoginOnly: "Log in to save protected copies.",
+        retry: "Please try again in a moment.",
+        failure: {
+          AI_SERVER_ERROR:
+            "The AI analysis server is having a temporary problem. Please try again in a moment.",
+          TIMEOUT: "The analysis timed out. Please try again in a moment.",
+        },
       },
     },
     ja: {
@@ -180,6 +191,12 @@ export const analyzeMessages = defineMessages(
         saved: "保護版を保存しました。",
         saveFailed: "保護版の保存に失敗しました。",
         saveLoginOnly: "保護版の保存はログイン後にご利用いただけます。",
+        retry: "しばらくしてからもう一度お試しください。",
+        failure: {
+          AI_SERVER_ERROR:
+            "AI分析サーバーに一時的な問題が発生しています。しばらくしてからもう一度お試しください。",
+          TIMEOUT: "分析がタイムアウトしました。しばらくしてからもう一度お試しください。",
+        },
       },
     },
     zh: {
@@ -238,6 +255,11 @@ export const analyzeMessages = defineMessages(
         saved: "保护版已保存。",
         saveFailed: "保护版保存失败。",
         saveLoginOnly: "登录后才能保存保护版。",
+        retry: "请稍后再试。",
+        failure: {
+          AI_SERVER_ERROR: "AI分析服务器暂时出现问题，请稍后再试。",
+          TIMEOUT: "分析超时，请稍后再试。",
+        },
       },
     },
   },
