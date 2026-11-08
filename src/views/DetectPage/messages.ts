@@ -81,7 +81,13 @@ export const detectMessages = defineMessages(
     undeterminedReason: {
       LOW_RESOLUTION:
         "이미지가 너무 작아 정확한 분석이 어렵습니다. 원본 사진으로 다시 시도해 주세요.",
+      NO_FACE_DETECTED:
+        "사진에서 얼굴을 찾지 못해 판단할 수 없습니다. 얼굴이 잘 보이는 사진으로 다시 시도해 주세요.",
     } as Record<string, string>,
+    fileTooLarge: {
+      title: "파일이 너무 커요.",
+      description: "100MB 이하, 6,400만 화소 이하의 사진으로 다시 시도해 주세요.",
+    },
     provenanceCaption: {
       HIGH: "이미지 파일에 AI 생성 도구의 기록이 남아 있습니다.",
       UNCERTAIN: "이미지 파일에 일부를 AI로 편집했다는 표시가 있습니다.",
@@ -253,6 +259,12 @@ export const detectMessages = defineMessages(
       undeterminedReason: {
         LOW_RESOLUTION:
           "The image is too small to analyze accurately. Please try again with the original photo.",
+        NO_FACE_DETECTED:
+          "We couldn't find a face in the photo, so it can't be assessed. Please try again with a photo where the face is clearly visible.",
+      },
+      fileTooLarge: {
+        title: "The file is too large.",
+        description: "Please try again with a photo under 100MB and 64 megapixels.",
       },
       provenanceCaption: {
         HIGH: "The image file contains a record of an AI generation tool.",
@@ -420,6 +432,12 @@ export const detectMessages = defineMessages(
       undeterminedReason: {
         LOW_RESOLUTION:
           "画像が小さすぎるため、正確な分析が難しいです。元の写真でもう一度お試しください。",
+        NO_FACE_DETECTED:
+          "写真から顔を見つけられなかったため、判断できません。顔がはっきり写っている写真でもう一度お試しください。",
+      },
+      fileTooLarge: {
+        title: "ファイルが大きすぎます。",
+        description: "100MB以下、6,400万画素以下の写真でもう一度お試しください。",
       },
       provenanceCaption: {
         HIGH: "画像ファイルにAI生成ツールの記録が残っています。",
@@ -578,6 +596,11 @@ export const detectMessages = defineMessages(
       },
       undeterminedReason: {
         LOW_RESOLUTION: "图片太小，难以准确分析。请使用原始照片重试。",
+        NO_FACE_DETECTED: "未能在照片中找到面部，因此无法判断。请使用面部清晰的照片重试。",
+      },
+      fileTooLarge: {
+        title: "文件太大。",
+        description: "请使用 100MB 以下、6400 万像素以下的照片重试。",
       },
       provenanceCaption: {
         HIGH: "图片文件中留有AI生成工具的记录。",

@@ -27,7 +27,13 @@ import { MOCK_RESULT } from "./mockResult";
 import type { DetectResult, DetectStatus } from "./types";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { detectMessages } from "./messages";
+import { exceedsUploadLimit } from "./uploadLimit";
 import { getWebSearchOutcome, raiseBand, type WebSearchOutcome } from "./webSearchOutcome";
+
+function isWebSearchDisabled(error: ApiError, detection: DeepfakeDetectionResponse | null) {
+  if (error.code === "WEB_SEARCH_DISABLED") return true;
+  return error.code === "NOT_FOUND" && detection?.webSearchAvailable === undefined;
+}
 
 const WEB_SEARCH_POLL = { intervalMs: 3000, timeoutMs: 330_000 };
 
@@ -131,6 +137,7 @@ export default function DetectPage() {
   const result: DetectResult = detection ? mapDetection(detection, t) : MOCK_RESULT;
   const resultRef = useRef<HTMLDivElement>(null);
   const webSearchAbortRef = useRef<AbortController | null>(null);
+  const fileSelectRequestRef = useRef(0);
 
   useEffect(() => {
     return () => webSearchAbortRef.current?.abort();
@@ -147,7 +154,14 @@ export default function DetectPage() {
     return scrollToElement(resultRef.current);
   }, [status]);
 
-  function handleFileSelect(file: File) {
+  async function handleFileSelect(file: File) {
+    const requestId = ++fileSelectRequestRef.current;
+    const tooLarge = await exceedsUploadLimit(file);
+    if (requestId !== fileSelectRequestRef.current) return;
+    if (tooLarge) {
+      toast.error(t.fileTooLarge.title, { description: t.fileTooLarge.description });
+      return;
+    }
     setPreviewUrl(URL.createObjectURL(file));
     setSelectedFile(file);
     setStatus("selected");
@@ -160,6 +174,7 @@ export default function DetectPage() {
   }
 
   function handleReset() {
+    fileSelectRequestRef.current += 1;
     cancelWebSearch();
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
@@ -188,7 +203,7 @@ export default function DetectPage() {
     },
     onError: (error) => {
       if (isAbortError(error)) return;
-      if (error instanceof ApiError && error.code === "NOT_FOUND") {
+      if (error instanceof ApiError && isWebSearchDisabled(error, detection)) {
         setWebSearchOff(true);
         return;
       }
@@ -280,7 +295,7 @@ export default function DetectPage() {
                 result={result}
                 previewUrl={previewUrl}
                 webSearch={detection?.webSearch ?? null}
-                webSearchOff={webSearchOff}
+                webSearchOff={webSearchOff || detection?.webSearchAvailable === false}
                 webSearchPending={webSearchMutation.isPending}
                 onWebSearch={handleWebSearch}
               />

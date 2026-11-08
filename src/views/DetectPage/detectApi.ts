@@ -74,6 +74,7 @@ export interface DeepfakeDetectionResponse {
   modelVersion?: string | null;
   provenanceSignals?: ProvenanceSignalResponse[];
   webSearch?: WebSearchResponse | null;
+  webSearchAvailable?: boolean;
 }
 
 export function isDeepfakeBand(value: string | null | undefined): value is DeepfakeBand {
