@@ -43,6 +43,12 @@ const verdictBand: Record<DeepfakeVerdict, DeepfakeBand> = {
   FAKE: "HIGH",
 };
 
+function scoreBand(score: number): DeepfakeBand {
+  if (score >= 70) return "HIGH";
+  if (score >= 40) return "UNCERTAIN";
+  return "LOW";
+}
+
 const overallWebNoteKey: Record<WebSearchOutcome, keyof DetectText["overallWebNote"]> = {
   IDLE: "NOT_APPLIED",
   SEARCHING: "NOT_APPLIED",
@@ -106,14 +112,19 @@ function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectRes
   const riskScore = data.riskScore ?? null;
   const caption = band ? bandCaption(data, band, t) : t.verdictCaption[verdict];
   const webOutcome = getWebSearchOutcome(data.webSearch);
-  const deepfakeLevel = band ?? verdictBand[verdict];
+  const legacyLevel = data.verdict
+    ? verdictBand[data.verdict]
+    : riskScore !== null
+      ? scoreBand(riskScore)
+      : "UNDETERMINED";
+  const deepfakeLevel = band ?? legacyLevel;
   const overallBand = webOutcome === "FOUND" ? raiseBand(deepfakeLevel) : deepfakeLevel;
 
   return {
     ...MOCK_RESULT,
     deepfakeVerdict: band ? t.band[band] : t.verdict[verdict],
     deepfakeRiskScore: riskScore,
-    deepfakeTone: verdict,
+    deepfakeTone: data.verdict ?? undefined,
     deepfakeBand: band,
     deepfakeCaption: caption,
     overallCaption: caption,
