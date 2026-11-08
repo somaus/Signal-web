@@ -8,6 +8,7 @@ import { shareAnalysisResult } from "@/features/analysis-share/shareAnalysisResu
 import Arrow from "@/shared/asset/svg/Arrow";
 import Share from "@/shared/asset/svg/Share";
 import BackButton from "@/shared/ui/BackButton";
+import LinkButton from "@/shared/ui/LinkButton";
 import { useIsLoggedIn } from "@/shared/lib/useIsLoggedIn";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -41,6 +42,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
     queryKey: ["riskAssessments", assessmentId],
     queryFn: () => getAssessment(assessmentId),
     enabled: Number.isFinite(assessmentId),
+    refetchInterval: (query) => (query.state.data?.status === "PROCESSING" ? 3000 : false),
   });
 
   const result =
@@ -101,6 +103,28 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
               {t.loadFailed}
               {error instanceof Error ? ` (${error.message})` : ""}
             </p>
+          )}
+
+          {assessment && !result && (
+            <div className="flex flex-col items-start gap-3 rounded-2xl border border-gray-300 bg-white p-5 md:p-8">
+              {assessment.status === "PROCESSING" ? (
+                <>
+                  <p className="text-body-1 font-semibold text-black">{t.processingTitle}</p>
+                  <p className="text-body-2 text-gray-700">{t.processingDescription}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-body-1 font-semibold text-black">{t.failedTitle}</p>
+                  <p className="text-body-2 text-gray-700">
+                    {(assessment.failureReason && t.failure[assessment.failureReason]) ||
+                      t.failedFallback}
+                  </p>
+                  <LinkButton href="/analyze" variant="primary" className="mt-2">
+                    {t.analyzeAgain}
+                  </LinkButton>
+                </>
+              )}
+            </div>
           )}
 
           {assessment && result && (
