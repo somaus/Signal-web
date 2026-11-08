@@ -82,11 +82,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
       "문의 대응과 서비스 관련 안내",
     ],
     retention:
-      "개인정보는 이용 목적이 달성되면 지체 없이 삭제하는 것을 원칙으로 합니다. 회원 탈퇴 시 회원 정보와 함께 업로드한 사진·영상, 분석·탐지·상담·신고 기록과 웹 검색 기록을 삭제하며, 관계 법령에 따라 보존 의무가 있는 정보는 정해진 기간 동안 별도로 보관합니다.",
+      "개인정보는 이용 목적이 달성되면 지체 없이 삭제하는 것을 원칙으로 합니다. 회원 탈퇴 시 계정 정보와 프로필 사진, 업로드한 사진·영상(보호 처리 이미지, 모니터링 기준 이미지, 신고 증거 파일 포함), 분석·탐지·보호·모니터링·상담·신고 기록, 웹 검색 기록을 삭제하며, 관계 법령에 따라 보존 의무가 있는 정보는 정해진 기간 동안 별도로 보관합니다. 다만 웹 역이미지 검색을 위해 외부 검색 서비스로 전송된 사진은 해당 서비스의 방침에 따라 처리됩니다(8항 참고).",
     deletedRecords: {
       title: "사용자가 삭제한 기록",
       description:
-        "삭제한 상담 내역, 분석 결과 및 신고 문서 기록은 기록에 쓰인 사진·영상 파일과 함께 삭제되며, 서비스에서 다시 조회할 수 없습니다.",
+        "삭제한 분석·탐지·보호·모니터링·상담·신고 기록은 기록에 쓰인 사진·영상 파일과 함께 삭제되며, 서비스에서 다시 조회할 수 없습니다. 다만 웹 역이미지 검색을 위해 외부 검색 서비스로 전송된 사진은 해당 서비스의 방침에 따라 처리됩니다.",
     },
     thirdParty:
       "원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 법률에 특별한 규정이 있거나 이용자가 사전에 동의한 경우에만 필요한 범위에서 제공합니다.",
@@ -109,7 +109,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
       {
         heading: "이미지 및 영상 분석",
         description:
-          "업로드한 사진·영상은 분석·탐지 결과와 함께 서버에 저장되며, 기록을 삭제하거나 회원 탈퇴를 하면 함께 삭제됩니다. 기록을 삭제하지 않은 경우의 자동 삭제 기간이 정해지면 이 방침을 개정해 안내합니다.",
+          "업로드한 사진·영상은 분석·탐지 결과와 함께 서버에 저장되며, 기록을 삭제하거나 회원 탈퇴를 하면 함께 삭제됩니다. 다만 웹 역이미지 검색을 위해 외부 검색 서비스로 전송된 사진은 해당 서비스의 방침에 따라 처리됩니다. 기록을 삭제하지 않은 경우의 자동 삭제 기간이 정해지면 이 방침을 개정해 안내합니다.",
       },
       {
         heading: "웹 역이미지 검색",
@@ -180,11 +180,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "Responding to inquiries and sending service-related notices",
       ],
       retention:
-        "As a rule, we delete personal information without delay once its purpose has been fulfilled. When you delete your account, we delete your account information together with your uploaded photos and videos, your analysis, detection, chat, and report records, and your web search records. Information that must be preserved under applicable laws is stored separately for the required period.",
+        "As a rule, we delete personal information without delay once its purpose has been fulfilled. When you delete your account, we delete your account information and profile photo, uploaded photos and videos (including protected images, monitoring reference images, and report evidence files), your analysis, detection, protection, monitoring, chat, and report records, and your web search records. Information that must be preserved under applicable laws is stored separately for the required period. However, photos sent to external search services for reverse image search are handled under those services' policies (see Section 8).",
       deletedRecords: {
         title: "Records you delete",
         description:
-          "Chat history, analysis results, and report document records you delete are removed together with the photo and video files used in them, and can no longer be viewed in the service.",
+          "Analysis, detection, protection, monitoring, chat, and report records you delete are removed together with the photo and video files used in them, and can no longer be viewed in the service. Photos sent to external search services for reverse image search are handled under those services' policies.",
       },
       thirdParty:
         "As a rule, we do not provide your personal information to outside parties. We provide it only to the extent necessary when required by law or when you have given prior consent.",
@@ -207,7 +207,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "Image and video analysis",
           description:
-            "Uploaded photos and videos are stored on our servers together with the analysis or detection results, and are deleted when you delete the records or your account. Once an automatic deletion period is set for records you keep, we will update this policy.",
+            "Uploaded photos and videos are stored on our servers together with the analysis or detection results, and are deleted when you delete the records or your account. Photos sent to external search services for reverse image search are handled under those services' policies. Once an automatic deletion period is set for records you keep, we will update this policy.",
         },
         {
           heading: "Reverse image search on the web",
@@ -277,11 +277,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "お問い合わせへの対応とサービスに関するご案内",
       ],
       retention:
-        "個人情報は利用目的を達成した後、遅滞なく削除することを原則とします。退会時には、会員情報とともにアップロードされた写真・動画、分析・検出・相談・通報の記録およびWeb検索の記録を削除し、関係法令により保存義務がある情報は定められた期間、別途保管します。",
+        "個人情報は利用目的を達成した後、遅滞なく削除することを原則とします。退会時にはアカウント情報とプロフィール写真、アップロードした写真・動画（保護処理した画像、モニタリングの基準画像、通報の証拠ファイルを含む）、分析・検出・保護・モニタリング・相談・通報の記録、Web検索の記録を削除し、関係法令により保存義務がある情報は定められた期間、別途保管します。ただし、Web逆画像検索のために外部の検索サービスへ送信された写真は、各サービスの方針に従って処理されます（第8項参照）。",
       deletedRecords: {
         title: "利用者が削除した記録",
         description:
-          "削除された相談履歴、分析結果および通報書類の記録は、記録に使われた写真・動画ファイルとともに削除され、サービス上で再び閲覧できなくなります。",
+          "削除された分析・検出・保護・モニタリング・相談・通報の記録は、記録に使われた写真・動画ファイルとともに削除され、サービス上で再び閲覧できなくなります。ただし、Web逆画像検索のために外部の検索サービスへ送信された写真は、各サービスの方針に従って処理されます。",
       },
       thirdParty:
         "原則として、利用者の個人情報を外部に提供しません。法律に特別な定めがある場合、または利用者の事前の同意がある場合に限り、必要な範囲で提供します。",
@@ -304,7 +304,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "画像・動画の分析",
           description:
-            "アップロードされた写真・動画は、分析・検出結果とともにサーバーに保存され、記録を削除したり退会したりすると一緒に削除されます。記録を削除しない場合の自動削除の期間が決まり次第、本ポリシーを改定してお知らせします。",
+            "アップロードされた写真・動画は、分析・検出結果とともにサーバーに保存され、記録を削除したり退会したりすると一緒に削除されます。ただし、Web逆画像検索のために外部の検索サービスへ送信された写真は、各サービスの方針に従って処理されます。記録を削除しない場合の自動削除の期間が決まり次第、本ポリシーを改定してお知らせします。",
         },
         {
           heading: "Web逆画像検索",
@@ -369,11 +369,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "回复咨询并发送服务相关通知",
       ],
       retention:
-        "原则上，个人信息在使用目的达成后将立即删除。注销账号时，我们会删除会员信息以及上传的照片和视频、分析、检测、咨询、举报记录和网络搜索记录；根据相关法律法规须保存的信息，将在规定期限内另行保存。",
+        "原则上，个人信息在使用目的达成后将立即删除。注销账号时，我们会删除账号信息和头像、上传的照片和视频（包括保护处理后的图片、监测基准图片、举报证据文件）、分析、检测、保护、监测、咨询、举报记录以及网络搜索记录；根据相关法律法规须保存的信息，将在规定期限内另行保存。但为进行网络以图搜图而发送到外部搜索服务的照片，将按照相应服务的政策处理（参见第8项）。",
       deletedRecords: {
         title: "用户删除的记录",
         description:
-          "已删除的咨询记录、分析结果及举报文件记录会连同其中使用的照片和视频文件一起删除，无法再在服务中查看。",
+          "已删除的分析、检测、保护、监测、咨询、举报记录会连同其中使用的照片和视频文件一起删除，无法再在服务中查看。但为进行网络以图搜图而发送到外部搜索服务的照片，将按照相应服务的政策处理。",
       },
       thirdParty:
         "原则上不向外部提供用户的个人信息。仅在法律有特别规定或用户事先同意的情况下，在必要范围内提供。",
@@ -395,7 +395,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "图片与视频分析",
           description:
-            "上传的照片和视频会与分析、检测结果一起保存在服务器上，删除记录或注销账号时会一并删除。未删除的记录的自动删除期限确定后，我们将修订本政策并另行通知。",
+            "上传的照片和视频会与分析、检测结果一起保存在服务器上，删除记录或注销账号时会一并删除。但为进行网络以图搜图而发送到外部搜索服务的照片，将按照相应服务的政策处理。未删除的记录的自动删除期限确定后，我们将修订本政策并另行通知。",
         },
         {
           heading: "网络以图搜图",
