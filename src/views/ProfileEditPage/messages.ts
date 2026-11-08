@@ -27,10 +27,10 @@ export const profileMessages = defineMessages(
     save: "변경사항 저장",
     withdrawTitle: "회원 탈퇴",
     withdrawDescription:
-      "탈퇴하면 계정 정보와 업로드한 사진·영상, 분석·탐지·상담·신고 기록이 삭제됩니다.",
+      "탈퇴하면 계정 정보와 프로필 사진, 업로드한 사진·영상(보호 처리 이미지, 모니터링 기준 이미지, 신고 증거 파일 포함), 분석·탐지·보호·모니터링·상담·신고 기록, 웹 검색 기록이 삭제됩니다. 웹 역이미지 검색을 위해 외부 검색 서비스로 전송된 사진은 해당 서비스의 방침에 따라 처리됩니다.",
     withdrawConfirmTitle: "정말 탈퇴하시겠습니까?",
     withdrawConfirmDescription:
-      "탈퇴하면 계정 정보와 업로드한 사진·영상, 분석·탐지·상담·신고 기록이 모두 삭제되며 되돌릴 수 없습니다.",
+      "탈퇴하면 계정 정보와 프로필 사진, 업로드한 사진·영상(보호 처리 이미지, 모니터링 기준 이미지, 신고 증거 파일 포함), 분석·탐지·보호·모니터링·상담·신고 기록, 웹 검색 기록이 모두 삭제되며 되돌릴 수 없습니다. 웹 역이미지 검색을 위해 외부 검색 서비스로 전송된 사진은 해당 서비스의 방침에 따라 처리됩니다.",
     withdrawConfirm: "탈퇴하기",
   },
   {
@@ -60,10 +60,10 @@ export const profileMessages = defineMessages(
       save: "Save changes",
       withdrawTitle: "Delete account",
       withdrawDescription:
-        "Deleting your account removes your account information, uploaded photos and videos, and your analysis, detection, chat, and report history.",
+        "Deleting your account deletes your account information and profile photo, uploaded photos and videos (including protected images, monitoring reference images, and report evidence files), your analysis, detection, protection, monitoring, chat, and report records, and your web search records. Photos sent to external search services for reverse image search are handled under those services' policies.",
       withdrawConfirmTitle: "Are you sure you want to delete your account?",
       withdrawConfirmDescription:
-        "Your account information, uploaded photos and videos, and your analysis, detection, chat, and report history will all be deleted and can't be restored.",
+        "Deleting your account permanently deletes your account information and profile photo, uploaded photos and videos (including protected images, monitoring reference images, and report evidence files), your analysis, detection, protection, monitoring, chat, and report records, and your web search records, and this can't be undone. Photos sent to external search services for reverse image search are handled under those services' policies.",
       withdrawConfirm: "Delete account",
     },
     ja: {
@@ -92,10 +92,10 @@ export const profileMessages = defineMessages(
       save: "変更内容を保存",
       withdrawTitle: "退会",
       withdrawDescription:
-        "退会すると、アカウント情報とアップロードした写真・動画、分析・検出・相談・通報の記録が削除されます。",
+        "退会すると、アカウント情報とプロフィール写真、アップロードした写真・動画（保護処理した画像、モニタリングの基準画像、通報の証拠ファイルを含む）、分析・検出・保護・モニタリング・相談・通報の記録、Web検索の記録が削除されます。Web逆画像検索のために外部の検索サービスへ送信された写真は、各サービスの方針に従って処理されます。",
       withdrawConfirmTitle: "本当に退会しますか？",
       withdrawConfirmDescription:
-        "退会すると、アカウント情報とアップロードした写真・動画、分析・検出・相談・通報の記録がすべて削除され、元に戻せません。",
+        "退会すると、アカウント情報とプロフィール写真、アップロードした写真・動画（保護処理した画像、モニタリングの基準画像、通報の証拠ファイルを含む）、分析・検出・保護・モニタリング・相談・通報の記録、Web検索の記録がすべて削除され、元に戻せません。Web逆画像検索のために外部の検索サービスへ送信された写真は、各サービスの方針に従って処理されます。",
       withdrawConfirm: "退会する",
     },
     zh: {
@@ -124,10 +124,10 @@ export const profileMessages = defineMessages(
       save: "保存修改",
       withdrawTitle: "注销账号",
       withdrawDescription:
-        "注销后，账号信息、上传的照片和视频以及分析、检测、咨询、举报记录将被删除。",
+        "注销后，账号信息和头像、上传的照片和视频（包括保护处理后的图片、监测基准图片、举报证据文件）、分析、检测、保护、监测、咨询、举报记录以及网络搜索记录将被删除。为进行网络以图搜图而发送到外部搜索服务的照片，将按照相应服务的政策处理。",
       withdrawConfirmTitle: "确定要注销吗？",
       withdrawConfirmDescription:
-        "注销后，账号信息、上传的照片和视频以及分析、检测、咨询、举报记录都将被删除且无法恢复。",
+        "注销后，账号信息和头像、上传的照片和视频（包括保护处理后的图片、监测基准图片、举报证据文件）、分析、检测、保护、监测、咨询、举报记录以及网络搜索记录都将被删除且无法恢复。为进行网络以图搜图而发送到外部搜索服务的照片，将按照相应服务的政策处理。",
       withdrawConfirm: "注销",
     },
   },
