@@ -30,7 +30,7 @@ function needsLogin(error: unknown) {
   );
 }
 
-const ASSESSMENT_POLL = { intervalMs: 1500, timeoutMs: 120_000 };
+const ASSESSMENT_POLL = { intervalMs: 2000, timeoutMs: 330_000 };
 
 export function useAnalyzeFlow() {
   const t = useT(analyzeMessages);
@@ -125,16 +125,22 @@ export function useAnalyzeFlow() {
   }
 
   const analyzeMutation = useMutation({
-    mutationFn: async () => {
-      if (!selectedFile) throw new Error(t.flow.selectImage);
+    mutationFn: async (resumeId: number | null) => {
       cancelAnalysis();
       const controller = new AbortController();
       analyzeAbortRef.current = controller;
-      const created = await createRiskAssessment(selectedFile);
-      if (controller.signal.aborted) throw new DOMException("Analysis aborted", "AbortError");
-      if (created.status !== "PROCESSING") return created;
+      let pendingId = resumeId;
+      if (pendingId === null) {
+        if (!selectedFile) throw new Error(t.flow.selectImage);
+        const created = await createRiskAssessment(selectedFile);
+        if (controller.signal.aborted) throw new DOMException("Analysis aborted", "AbortError");
+        if (created.status !== "PROCESSING") return created;
+        pendingId = created.assessmentId;
+        setAssessmentId(pendingId);
+      }
+      const assessmentToPoll = pendingId;
       return pollUntil(
-        () => getAssessment(created.assessmentId),
+        () => getAssessment(assessmentToPoll),
         (polled) => polled.status !== "PROCESSING",
         { ...ASSESSMENT_POLL, signal: controller.signal },
       );
@@ -162,6 +168,14 @@ export function useAnalyzeFlow() {
       showError(t.flow.analyzeFailed, error, t.flow.loginAndRetry);
     },
   });
+
+  const { mutate: analyze } = analyzeMutation;
+
+  useEffect(() => {
+    if (initial.status === "analyzing" && initial.assessmentId !== null) {
+      analyze(initial.assessmentId);
+    }
+  }, [analyze, initial.status, initial.assessmentId]);
 
   const protectMutation = useMutation({
     mutationFn: async () => {
@@ -212,7 +226,7 @@ export function useAnalyzeFlow() {
 
   function handleAnalyze() {
     setStatus("analyzing");
-    analyzeMutation.mutate();
+    analyzeMutation.mutate(null);
   }
 
   function handleProtect() {
