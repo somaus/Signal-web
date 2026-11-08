@@ -30,6 +30,11 @@ import { detectMessages } from "./messages";
 import { exceedsUploadLimit } from "./uploadLimit";
 import { getWebSearchOutcome, raiseBand, type WebSearchOutcome } from "./webSearchOutcome";
 
+function isWebSearchDisabled(error: ApiError, detection: DeepfakeDetectionResponse | null) {
+  if (error.code === "WEB_SEARCH_DISABLED") return true;
+  return error.code === "NOT_FOUND" && detection?.webSearchAvailable === undefined;
+}
+
 const WEB_SEARCH_POLL = { intervalMs: 3000, timeoutMs: 330_000 };
 
 const verdictBand: Record<DeepfakeVerdict, DeepfakeBand> = {
@@ -198,7 +203,7 @@ export default function DetectPage() {
     },
     onError: (error) => {
       if (isAbortError(error)) return;
-      if (error instanceof ApiError && error.code === "NOT_FOUND") {
+      if (error instanceof ApiError && isWebSearchDisabled(error, detection)) {
         setWebSearchOff(true);
         return;
       }
@@ -290,7 +295,7 @@ export default function DetectPage() {
                 result={result}
                 previewUrl={previewUrl}
                 webSearch={detection?.webSearch ?? null}
-                webSearchOff={webSearchOff}
+                webSearchOff={webSearchOff || detection?.webSearchAvailable === false}
                 webSearchPending={webSearchMutation.isPending}
                 onWebSearch={handleWebSearch}
               />
