@@ -2,19 +2,10 @@
 
 import BotOutline from "@/shared/asset/svg/BotOutline";
 import Warning from "@/shared/asset/svg/Warning";
-import RiskScoreGauge from "@/shared/ui/RiskScoreGauge";
-import type { RiskLevel } from "@/shared/ui/messages";
 import BandScale from "./BandScale";
-import type { DeepfakeVerdict } from "./detectApi";
 import type { DetectResult } from "./types";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { detectMessages } from "./messages";
-
-const toneToLevel: Record<DeepfakeVerdict, RiskLevel> = {
-  REAL: "안전",
-  SUSPICIOUS: "주의",
-  FAKE: "위험",
-};
 
 interface OverallRiskCardProps {
   result: DetectResult;
@@ -31,27 +22,7 @@ export default function OverallRiskCard({ result }: OverallRiskCardProps) {
           <Warning />
         </span>
       </div>
-      {result.overallBand ? (
-        <BandScale band={result.overallBand} label={messages.overallLevel[result.overallBand]} />
-      ) : (
-        <div
-          role="img"
-          aria-label={t.overallScoreLabel(result.overallScore)}
-          className="relative flex h-40 w-40 items-center justify-center"
-        >
-          <RiskScoreGauge
-            score={result.overallScore ?? 0}
-            size={160}
-            level={result.deepfakeTone ? toneToLevel[result.deepfakeTone] : undefined}
-          />
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-h1 font-bold text-black">{result.overallScore ?? "-"}</p>
-            {result.overallScore !== null && (
-              <p className="text-h3 font-semibold text-gray-500">/100</p>
-            )}
-          </div>
-        </div>
-      )}
+      <BandScale band={result.overallBand} label={messages.overallLevel[result.overallBand]} />
       <p className="text-body-2 text-center text-gray-800">{result.overallCaption}</p>
       <p className="text-small text-gray-650 text-center break-keep">{result.overallWebNote}</p>
       {result.deepfakeBand ? (
