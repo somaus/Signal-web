@@ -42,9 +42,7 @@ export function useAnalyzeFlow() {
   const [selectedFile, setSelectedFile] = useState<File | null>(initial.selectedFile);
   const [showDetails, setShowDetails] = useState(initial.showDetails);
   const [isProtected, setIsProtected] = useState(initial.isProtected);
-  const [isSimulatedProtection, setIsSimulatedProtection] = useState(
-    initial.isSimulatedProtection,
-  );
+  const [isSimulatedProtection, setIsSimulatedProtection] = useState(initial.isSimulatedProtection);
   const [assessment, setAssessment] = useState<RiskAssessmentResponse | null>(initial.assessment);
   const result: AnalysisResult | null = assessment ? mapAssessment(assessment, locale) : null;
   const [assessmentId, setAssessmentId] = useState<number | null>(initial.assessmentId);
