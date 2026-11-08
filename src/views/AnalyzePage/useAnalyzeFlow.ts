@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import {
   createRiskAssessment,
   getAssessment,
+  isCompletedAssessment,
   type RiskAssessmentResponse,
 } from "@/entities/analysis/api";
 import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
@@ -44,7 +45,8 @@ export function useAnalyzeFlow() {
   const [isProtected, setIsProtected] = useState(initial.isProtected);
   const [isSimulatedProtection, setIsSimulatedProtection] = useState(initial.isSimulatedProtection);
   const [assessment, setAssessment] = useState<RiskAssessmentResponse | null>(initial.assessment);
-  const result: AnalysisResult | null = assessment ? mapAssessment(assessment, locale) : null;
+  const result: AnalysisResult | null =
+    assessment && isCompletedAssessment(assessment) ? mapAssessment(assessment, locale) : null;
   const [assessmentId, setAssessmentId] = useState<number | null>(initial.assessmentId);
   const [protectionId, setProtectionId] = useState<number | null>(initial.protectionId);
   const analyzeAbortRef = useRef<AbortController | null>(null);

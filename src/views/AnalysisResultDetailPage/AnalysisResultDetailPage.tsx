@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { getAssessment } from "@/entities/analysis/api";
+import { getAssessment, isCompletedAssessment } from "@/entities/analysis/api";
 import { mapAssessment } from "@/entities/analysis/model";
 import { shareAnalysisResult } from "@/features/analysis-share/shareAnalysisResult";
 import Arrow from "@/shared/asset/svg/Arrow";
@@ -43,7 +43,8 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
     enabled: Number.isFinite(assessmentId),
   });
 
-  const result = assessment ? mapAssessment(assessment, locale) : null;
+  const result =
+    assessment && isCompletedAssessment(assessment) ? mapAssessment(assessment, locale) : null;
 
   return (
     <>
