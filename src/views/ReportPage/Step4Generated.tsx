@@ -1,6 +1,8 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { getReport } from "@/entities/report/api";
 import Button, { buttonStyle } from "@/shared/ui/Button";
 import DraftCardHeader from "./DraftCardHeader";
 import StepNavigation from "./StepNavigation";
@@ -9,6 +11,8 @@ import type { ReportDraft } from "./reportDraft";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { formatDateLong } from "@/shared/i18n/format";
 import { reportMessages } from "./messages";
+import ReportDocumentDownloadButton from "./ReportDocumentDownloadButton";
+import ReportSummary from "./ReportSummary";
 
 interface Step4GeneratedProps {
   draft: ReportDraft;
@@ -31,6 +35,11 @@ export default function Step4Generated({
 }: Step4GeneratedProps) {
   const { draft: d } = useT(reportMessages);
   const { locale } = useLocale();
+  // 요약은 서버가 저장한 뒤에 생기므로 저장된 신고서에서 가져온다. 못 가져와도 화면은 그대로 보여준다.
+  const { data: report } = useQuery({
+    queryKey: ["reports", reportId],
+    queryFn: () => getReport(reportId),
+  });
   const sourceUrl = draft.sourceUrl.trim();
   const rows: { title: string; body: string }[] = [
     { title: d.overview, body: d.overviewText(draft.damageType.trim()) },
@@ -57,6 +66,8 @@ export default function Step4Generated({
           description={d.readyDescription}
           status={d.generated}
         />
+
+        <ReportSummary summary={report?.summary} />
 
         <div className="flex flex-col gap-2">
           <p className="text-body-2 md:text-body-1 px-1 text-black">{d.content}</p>
@@ -86,6 +97,7 @@ export default function Step4Generated({
 
       <StepNavigation onBack={onBack}>
         <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row">
+          <ReportDocumentDownloadButton reportId={reportId} className="w-full md:w-auto" />
           <Link
             href={`/mypage/reports/${reportId}`}
             className={buttonStyle("outline", "w-full md:w-auto")}

@@ -16,7 +16,8 @@ import Button from "@/shared/ui/Button";
 import ConfirmModal from "@/shared/ui/ConfirmModal";
 import NoticeBanner from "@/shared/ui/NoticeBanner";
 import PageHeading from "@/shared/ui/PageHeading";
-import { resolveFileUrl } from "@/shared/lib/resolveFileUrl";
+import ReportDocumentDownloadButton from "@/views/ReportPage/ReportDocumentDownloadButton";
+import ReportSummary from "@/views/ReportPage/ReportSummary";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
@@ -265,22 +266,10 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
 
                 <NoticeBanner className="w-full max-w-[960px]">{t.aiNotice}</NoticeBanner>
 
-                {report.documentSimulated ? (
-                  <p className="text-small md:text-body-2 w-full max-w-[960px] text-gray-700">
-                    {t.fileSimulated}
-                  </p>
-                ) : (
-                  report.documentUrl && (
-                    <a
-                      href={resolveFileUrl(report.documentUrl)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-secondary-600 text-body-2 w-full max-w-[960px] underline"
-                    >
-                      {t.viewFile}
-                    </a>
-                  )
-                )}
+                <div className="flex w-full max-w-[960px] flex-col gap-3">
+                  <ReportDocumentDownloadButton reportId={reportId} className="w-full md:w-fit" />
+                  {!isEditing && <ReportSummary summary={report.summary} />}
+                </div>
 
                 <div className="flex w-full max-w-[960px] flex-col gap-2">
                   <p className="text-body-2 md:text-body-1 text-black">{t.content}</p>
