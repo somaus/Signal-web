@@ -24,6 +24,13 @@ npx expo start
 
 `.env`는 커밋하지 않습니다. 값을 바꾼 뒤에는 `npx expo start --clear`로 다시 켭니다.
 
+## 시연 실행 방식
+
+시연은 **Expo Go**로 실행하는 것을 기본으로 합니다. 빌드가 필요 없고, 코드를 고치면 바로 반영됩니다. 시연 기기에서 Expo Go를 쓸 수 없을 때만 아래 APK를 대신 씁니다.
+
+- **Expo Go (기본)**: 일반적인 시연. 휴대폰에 Expo Go를 설치하고 PC와 같은 와이파이에 연결합니다.
+- **EAS preview APK**: Expo Go를 쓸 수 없는 Android 기기용. Expo 계정과 `eas-cli`가 필요하고 빌드에 몇 분 걸립니다.
+
 ## 폴더 구조
 
 웹과 같은 Feature-Sliced Design 구조입니다. import 방향은 `app → views → widgets → features → entities → shared` 한쪽으로만 둡니다.
