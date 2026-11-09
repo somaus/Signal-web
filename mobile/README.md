@@ -38,9 +38,18 @@ src/
     api/      axios 클라이언트, 에러 문구
     config/   환경변수, QueryClient, 색상 상수
     i18n/     ko/en 다국어
-    lib/      토큰 저장, 비회원 ID 등
+    lib/      토큰 저장, 비회원 ID, 사진 선택, 폴링 타임아웃 등
     ui/       Screen, Button, Card, Badge, Loading, ErrorView, Input, Text
 ```
+
+## 위험도 분석 화면
+
+사진 위험도 분석(`분석` 탭)은 사진을 고르면(`widgets/ImagePickerCard`, 갤러리·카메라) 서버에 접수하고, 접수된 번호의 결과 화면(`/analyze/[id]`)이 진행 중인 동안 1.5초마다 조회합니다.
+
+- 결과 화면은 번호로 조회하므로 화면을 벗어났다 돌아와도 이어집니다. 이 기기에서 만든 번호는 `AsyncStorage`에 최근 20개를 보관하고(`shared/lib/recentIds.ts`), 진행 중인 건이 있으면 첫 화면에 "이어서 보기"가 나옵니다.
+- 분석 기록은 로그인하면 서버 목록(`GET /api/v1/risk-assessments`), 비회원이면 이 기기의 최근 번호로 보여줍니다.
+- 사진은 JPG, PNG만 올립니다(HEIC는 선택기가 JPEG로 바꿉니다). 10MB 이하, 6,400만 화소 이하입니다.
+- 업로드 요청만 타임아웃이 60초입니다(`shared/api/imageForm.ts`). 나머지 요청은 10초입니다.
 
 ## 디자인 토큰
 
