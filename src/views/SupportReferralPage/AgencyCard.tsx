@@ -10,6 +10,7 @@ import { referralMessages } from "./messages";
 
 interface AgencyCardProps {
   agency: AgencyResponse;
+  reportId?: number;
 }
 
 function extractDialNumber(phone: string) {
@@ -17,7 +18,7 @@ function extractDialNumber(phone: string) {
   return match ? match[0].replace(/-/g, "") : phone;
 }
 
-export default function AgencyCard({ agency }: AgencyCardProps) {
+export default function AgencyCard({ agency, reportId }: AgencyCardProps) {
   const { agencyId, name, phone, website, availableHours, supportedActions } = agency;
   const t = useT(referralMessages);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -25,7 +26,7 @@ export default function AgencyCard({ agency }: AgencyCardProps) {
   async function recordConnection(connectionType: "PHONE" | "WEB") {
     setIsConnecting(true);
     try {
-      await createConnection(agencyId, { connectionType });
+      await createConnection(agencyId, { connectionType, reportId });
     } catch {
       // 연결 기록 실패는 사용자 흐름(전화 연결/사이트 이동)을 막지 않음
     } finally {

@@ -18,6 +18,8 @@ export const referralMessages = defineMessages(
     online: "온라인 상담 이동",
     noContact: "등록된 연락처 정보가 없습니다.",
     recording: "연결 기록 중...",
+    attachedTitle: "신고 문서를 준비했어요",
+    attachedDescription: "기관에 문의하거나 접수할 때 이 문서를 함께 전달해 주세요.",
   },
   {
     en: {
@@ -37,6 +39,8 @@ export const referralMessages = defineMessages(
       online: "Go to online counseling",
       noContact: "No contact information is registered.",
       recording: "Recording connection...",
+      attachedTitle: "Your report document is ready",
+      attachedDescription: "Please share this document when you contact or file with an agency.",
     },
     ja: {
       title: "実際の機関につなぐ",
@@ -55,6 +59,9 @@ export const referralMessages = defineMessages(
       online: "オンライン相談へ",
       noContact: "登録されている連絡先がありません。",
       recording: "接続を記録中...",
+      attachedTitle: "通報書類を用意しました",
+      attachedDescription:
+        "機関に問い合わせる際や受け付けを依頼する際は、この書類も一緒にお渡しください。",
     },
     zh: {
       title: "对接实际机构",
@@ -73,6 +80,8 @@ export const referralMessages = defineMessages(
       online: "前往在线咨询",
       noContact: "暂无登记的联系方式。",
       recording: "正在记录连接...",
+      attachedTitle: "已为您备好举报文件",
+      attachedDescription: "联系或向机构提交时，请一并提供此文件。",
     },
   },
 );
