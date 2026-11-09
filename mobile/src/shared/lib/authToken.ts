@@ -7,12 +7,12 @@ let accessToken: string | null = null;
 let refreshToken: string | null = null;
 let loaded: Promise<void> | null = null;
 
-type Listener = (loggedIn: boolean) => void;
+type Listener = (loggedIn: boolean, expired: boolean) => void;
 const listeners = new Set<Listener>();
 
-function emit() {
+function emit(expired = false) {
   const loggedIn = accessToken !== null;
-  listeners.forEach((listener) => listener(loggedIn));
+  listeners.forEach((listener) => listener(loggedIn, expired));
 }
 
 /** 앱을 켠 뒤 처음 한 번 SecureStore에서 토큰을 읽어 메모리에 올린다. */
@@ -52,7 +52,10 @@ export async function setAuthTokens(access: string, refresh: string): Promise<vo
   emit();
 }
 
-export async function clearAuthTokens(): Promise<void> {
+/** expired가 true면 사용자가 직접 로그아웃한 게 아니라 세션이 만료돼 지운 것이다. */
+export async function clearAuthTokens({
+  expired = false,
+}: { expired?: boolean } = {}): Promise<void> {
   await loadAuthTokens();
   accessToken = null;
   refreshToken = null;
@@ -60,7 +63,7 @@ export async function clearAuthTokens(): Promise<void> {
     SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY),
     SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY),
   ]).catch(() => undefined);
-  emit();
+  emit(expired);
 }
 
 /** 로그인 상태가 바뀔 때(로그인, 로그아웃, 토큰 만료) 호출된다. 해제 함수를 돌려준다. */

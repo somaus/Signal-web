@@ -5,7 +5,7 @@ import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "@/entities/user/AuthProvider";
 import { makeQueryClient } from "@/shared/config/queryClient";
@@ -13,19 +13,16 @@ import { I18nProvider } from "@/shared/i18n/I18nProvider";
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
-/** 로그인돼 있던 중에 토큰이 지워지면(만료·로그아웃) 로그인 화면으로 보낸다. */
+/** 세션이 만료돼 로그인이 풀리면 로그인 화면으로 보낸다. 직접 로그아웃한 경우는 이동하지 않는다. */
 function SessionGuard() {
   const router = useRouter();
-  const { loading, loggedIn } = useAuth();
-  const wasLoggedIn = useRef(false);
+  const { loading, sessionExpired, acknowledgeSessionExpired } = useAuth();
 
   useEffect(() => {
-    if (loading) return;
-    if (wasLoggedIn.current && !loggedIn) {
-      router.replace({ pathname: "/login", params: { expired: "1" } });
-    }
-    wasLoggedIn.current = loggedIn;
-  }, [loading, loggedIn, router]);
+    if (loading || !sessionExpired) return;
+    acknowledgeSessionExpired();
+    router.replace({ pathname: "/login", params: { expired: "1" } });
+  }, [loading, sessionExpired, acknowledgeSessionExpired, router]);
 
   return null;
 }

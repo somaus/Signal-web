@@ -21,17 +21,15 @@ export class ApiError extends Error {
   }
 }
 
-export const api = axios.create({
+const clientConfig = {
   baseURL: API_URL,
   timeout: 10_000,
   headers: { "Content-Type": "application/json" },
-});
+};
 
-const reissueClient = axios.create({
-  baseURL: API_URL,
-  timeout: 10_000,
-  headers: { "Content-Type": "application/json" },
-});
+export const api = axios.create(clientConfig);
+
+const reissueClient = axios.create(clientConfig);
 
 interface RetryableConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -54,11 +52,17 @@ async function reissueAccessToken(): Promise<string | null> {
     });
     await setAuthTokens(data.accessToken, data.refreshToken);
     return data.accessToken;
-  } catch {
-    // 재발급까지 실패하면 로그인이 풀린 것이다. 토큰을 지우면 구독 중인 화면이 로그인으로 보낸다.
-    await clearAuthTokens();
+  } catch (error) {
+    // 서버가 리프레시 토큰을 거절했을 때만 로그인이 풀린 것으로 본다.
+    // 타임아웃·오프라인·5xx 같은 일시적 오류에는 토큰을 그대로 둔다.
+    if (isRefreshTokenRejected(error)) await clearAuthTokens({ expired: true });
     return null;
   }
+}
+
+function isRefreshTokenRejected(error: unknown): boolean {
+  if (!axios.isAxiosError<{ code?: string }>(error)) return false;
+  return error.response?.status === 401 || error.response?.data?.code === "INVALID_REFRESH_TOKEN";
 }
 
 api.interceptors.request.use(async (config) => {
@@ -74,12 +78,8 @@ api.interceptors.response.use(
     const original = error.config as RetryableConfig | undefined;
     const isAuthEndpoint = original?.url?.includes("/api/v1/auth/");
 
-    if (
-      (error.response?.status === 401 || error.response?.status === 403) &&
-      original &&
-      !original._retry &&
-      !isAuthEndpoint
-    ) {
+    // 서버는 인증이 없거나 만료되면 401, 권한이 부족하면 403을 준다. 재발급은 401만 처리한다.
+    if (error.response?.status === 401 && original && !original._retry && !isAuthEndpoint) {
       original._retry = true;
       reissuePromise ??= reissueAccessToken().finally(() => {
         reissuePromise = null;
@@ -95,13 +95,17 @@ api.interceptors.response.use(
     const t = errorMessages[locale];
     const data = error.response?.data;
     const code = isApiErrorCode(data?.code) ? data.code : undefined;
-    const serverMessage = locale === "ko" ? data?.message : undefined;
+    // 에러 코드에 맞는 문구를 먼저 쓴다. 서버 메시지는 코드가 없는 4xx 응답의 한국어 안내로만 쓰고,
+    // 서버 오류(5xx)의 메시지는 내부 정보가 섞일 수 있어 보여주지 않는다.
+    const status = error.response?.status;
+    const serverMessage =
+      locale === "ko" && status !== undefined && status < 500 ? data?.message : undefined;
     const fallback = error.response
       ? t.unknown
       : error.code === AxiosError.ECONNABORTED
         ? t.timeout
         : t.network;
-    const message = serverMessage ?? (code ? t.codes[code] : undefined) ?? fallback;
+    const message = (code ? t.codes[code] : undefined) ?? serverMessage ?? fallback;
     return Promise.reject(new ApiError(message, code));
   },
 );
