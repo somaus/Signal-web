@@ -226,7 +226,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
   }
 
   function handleFindAgency() {
-    router.push("/support-referral");
+    router.push(`/support-referral?reportId=${reportId}`);
   }
 
   return (
