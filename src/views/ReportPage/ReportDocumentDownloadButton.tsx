@@ -29,7 +29,7 @@ export default function ReportDocumentDownloadButton({
       link.href = url;
       link.download = `signal-report-${reportId}.pdf`;
       link.click();
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     },
     onError: () => {
       toast.error(t.downloadFailed);
