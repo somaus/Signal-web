@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Signal",
+    "slug": "signal-mobile",
+    "version": "0.1.0",
+    "scheme": "signal",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "kr.somaus.signal"
+    },
+    "android": {
+      "package": "kr.somaus.signal",
+      "adaptiveIcon": {
+        "backgroundColor": "#edf3f8",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": ["expo-router", "expo-secure-store", "expo-font", "expo-localization"],
+    "extra": {
+      "router": {}
+    },
+    "platforms": ["ios", "android"]
+  }
+}
