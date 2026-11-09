@@ -9,6 +9,7 @@ export const moreMessages = defineMessages(
     logout: "로그아웃",
     language: "언어",
     server: "서버",
+    profileLoading: "내 정보를 불러오는 중이에요.",
     profileError: "내 정보를 불러오지 못했어요.",
   },
   {
@@ -20,6 +21,7 @@ export const moreMessages = defineMessages(
       logout: "Log out",
       language: "Language",
       server: "Server",
+      profileLoading: "Loading your profile.",
       profileError: "We couldn't load your profile.",
     },
   },
