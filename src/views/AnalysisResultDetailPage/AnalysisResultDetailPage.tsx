@@ -112,27 +112,36 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
             </p>
           )}
 
-          {assessment && !result && (
-            <div className="flex flex-col items-start gap-3 rounded-2xl border border-gray-300 bg-white p-5 md:p-8">
-              {assessment.status === "PROCESSING" ? (
-                <>
-                  <p className="text-body-1 font-semibold text-black">{t.processingTitle}</p>
-                  <p className="text-body-2 text-gray-700">{t.processingDescription}</p>
-                </>
-              ) : (
-                <>
-                  <p className="text-body-1 font-semibold text-black">{t.failedTitle}</p>
-                  <p className="text-body-2 text-gray-700">
-                    {(assessment.failureReason && t.failure[assessment.failureReason]) ||
-                      t.failedFallback}
-                  </p>
-                  <LinkButton href="/analyze" variant="primary" className="mt-2">
-                    {t.analyzeAgain}
-                  </LinkButton>
-                </>
-              )}
+          {assessment && !result && assessment.status === "PROCESSING" && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="flex flex-col items-start gap-3 rounded-2xl border border-gray-300 bg-white p-5 md:p-8"
+            >
+              <p className="text-body-1 font-semibold text-black">{t.processingTitle}</p>
+              <p className="text-body-2 text-gray-700">{t.processingDescription}</p>
             </div>
           )}
+
+          {assessment && !result && assessment.status === "FAILED" && (
+            <div className="flex flex-col items-start gap-3 rounded-2xl border border-gray-300 bg-white p-5 md:p-8">
+              <p className="text-body-1 font-semibold text-black">{t.failedTitle}</p>
+              <p className="text-body-2 text-gray-700">
+                {(assessment.failureReason && t.failure[assessment.failureReason]) ||
+                  t.failedFallback}
+              </p>
+              <LinkButton href="/analyze" variant="primary" className="mt-2">
+                {t.analyzeAgain}
+              </LinkButton>
+            </div>
+          )}
+
+          {assessment &&
+            !result &&
+            assessment.status !== "PROCESSING" &&
+            assessment.status !== "FAILED" && (
+              <p className="text-body-1 text-red-500">{t.loadFailed}</p>
+            )}
 
           {assessment && result && (
             <>
