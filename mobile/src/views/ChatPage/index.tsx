@@ -47,7 +47,7 @@ export default function ChatPage() {
   const chat = useChatSession(loggedIn, {
     onCrisis: () => setAgencySheet({ situationType: "CRISIS" }),
   });
-  const { resume, resumedId } = chat;
+  const { resume, resumedId, hasStarted } = chat;
   // 이미 처리한(불러왔거나, 취소했거나, 새 상담으로 넘긴) 이어서 대화하기 ID.
   // 상태 변경과 화면 주소 변경이 다른 렌더에 반영돼도 같은 상담을 다시 불러오지 않게 막는다.
   const handledResumeRef = useRef<string | null>(null);
@@ -67,8 +67,21 @@ export default function ChatPage() {
     if (!history.data || history.isFetching) return;
     if (handledResumeRef.current === resumeId || resumedId === resumeId) return;
     handledResumeRef.current = resumeId;
-    void resume(resumeId, history.data.messages);
-  }, [resumeId, resumedId, history.data, history.isFetching, resume]);
+    const messages = history.data.messages;
+    if (!hasStarted) {
+      void resume(resumeId, messages);
+      return;
+    }
+    // 이 탭에서 진행 중인 대화가 있으면 사라진다고 먼저 알린다.
+    Alert.alert(t.resumeConfirm.title, t.resumeConfirm.description, [
+      {
+        text: t.cancel,
+        style: "cancel",
+        onPress: () => router.setParams({ sessionId: undefined }),
+      },
+      { text: t.resumeConfirm.confirm, onPress: () => void resume(resumeId, messages) },
+    ]);
+  }, [resumeId, resumedId, hasStarted, history.data, history.isFetching, resume, router, t]);
 
   function startNewChat() {
     // 주소의 sessionId가 지워지기 전 렌더에서 이전 상담이 다시 열리지 않게 먼저 처리한 것으로 둔다.
@@ -105,7 +118,9 @@ export default function ChatPage() {
   }
 
   const canSubmit = draft.trim().length > 0 && !chat.isSending;
-  const resuming = Boolean(resumeId) && resumedId !== resumeId && !history.isError;
+  // 진행 중인 대화가 있으면 확인창을 띄우는 동안 그 대화를 그대로 보여준다.
+  const resuming =
+    Boolean(resumeId) && resumedId !== resumeId && !history.isError && !chat.hasStarted;
 
   const greeting = (
     <View className="gap-4 pb-2">
