@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // React Native 앱(mobile/)은 자체 ESLint 설정을 쓴다.
+    "mobile/**",
   ]),
 ]);
 
