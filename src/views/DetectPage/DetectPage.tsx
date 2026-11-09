@@ -6,14 +6,20 @@ import { toast } from "sonner";
 import AnalysisGuideCard from "@/shared/ui/AnalysisGuideCard";
 import Button from "@/shared/ui/Button";
 import PageHeading from "@/shared/ui/PageHeading";
-import { pollUntil } from "@/shared/lib/poll";
+import { ApiError } from "@/shared/api/axios";
+import { isAbortError, pollUntil } from "@/shared/lib/poll";
 import { scrollToElement } from "@/shared/lib/scrollToElement";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import {
   createDeepfakeDetection,
   getDeepfakeDetection,
+  isDeepfakeBand,
+  startWebSearch,
+  type DeepfakeBand,
   type DeepfakeDetectionResponse,
+  type DeepfakeVerdict,
+  type WebSearchResponse,
 } from "./detectApi";
 import DetectResultSection from "./DetectResultSection";
 import DetectUploadCard from "./DetectUploadCard";
@@ -21,6 +27,32 @@ import { MOCK_RESULT } from "./mockResult";
 import type { DetectResult, DetectStatus } from "./types";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { detectMessages } from "./messages";
+import { exceedsUploadLimit } from "./uploadLimit";
+import { getWebSearchOutcome, raiseBand, type WebSearchOutcome } from "./webSearchOutcome";
+
+const WEB_SEARCH_POLL = { intervalMs: 3000, timeoutMs: 330_000 };
+
+const verdictBand: Record<DeepfakeVerdict, DeepfakeBand> = {
+  REAL: "LOW",
+  SUSPICIOUS: "UNCERTAIN",
+  FAKE: "HIGH",
+};
+
+function scoreBand(score: number): DeepfakeBand {
+  if (score >= 70) return "HIGH";
+  if (score >= 40) return "UNCERTAIN";
+  return "LOW";
+}
+
+const overallWebNoteKey: Record<WebSearchOutcome, keyof DetectText["overallWebNote"]> = {
+  IDLE: "NOT_APPLIED",
+  SEARCHING: "NOT_APPLIED",
+  UNAVAILABLE: "NOT_APPLIED",
+  FAILED: "NOT_APPLIED",
+  FOUND: "RAISED",
+  SIMILAR_ONLY: "SIMILAR_ONLY",
+  NONE: "NONE",
+};
 
 function formatEvidenceType(type: string, labels: Record<string, string>): string {
   if (labels[type]) return labels[type];
@@ -32,38 +64,72 @@ function formatEvidenceType(type: string, labels: Record<string, string>): strin
     .join(" ");
 }
 
-function mapDetection(
-  data: DeepfakeDetectionResponse,
-  t: (typeof detectMessages)[keyof typeof detectMessages],
-): DetectResult {
+type DetectText = (typeof detectMessages)[keyof typeof detectMessages];
+
+function bandCaption(data: DeepfakeDetectionResponse, band: DeepfakeBand, t: DetectText): string {
+  if (band === "UNDETERMINED") {
+    const reason = data.undeterminedReason ? t.undeterminedReason[data.undeterminedReason] : null;
+    return reason ?? t.bandCaption.UNDETERMINED;
+  }
+  if (data.assessmentBasis === "PROVENANCE") {
+    return t.provenanceCaption[band] ?? t.bandCaption[band];
+  }
+  return t.bandCaption[band];
+}
+
+function mapEvidenceHighlights(data: DeepfakeDetectionResponse, t: DetectText) {
+  const provenanceHighlights = (data.provenanceSignals ?? []).map((signal) => {
+    const text = t.provenance[signal.code];
+    if (text) return text;
+    return {
+      tab: t.provenanceFallbackTab,
+      description: signal.message || t.evidenceNoDescription,
+    };
+  });
+  const modelHighlights = (data.evidences ?? []).map((evidence, index) => ({
+    tab: evidence.type
+      ? formatEvidenceType(evidence.type, t.evidenceType)
+      : t.evidenceFallbackTab(index + 1),
+    description: evidence.description || t.evidenceNoDescription,
+  }));
+  const highlights = [...provenanceHighlights, ...modelHighlights];
+  return highlights.length > 0
+    ? highlights
+    : [{ tab: t.noEvidenceTab, description: t.noEvidenceDescription }];
+}
+
+function mapDetection(data: DeepfakeDetectionResponse, t: DetectText): DetectResult {
+  const knownBand = isDeepfakeBand(data.band) ? data.band : null;
+  const hasLegacyResult = data.verdict != null || data.riskScore != null;
+  const band: DeepfakeBand | null = knownBand ?? (hasLegacyResult ? null : "UNDETERMINED");
   const verdict = data.verdict ?? "SUSPICIOUS";
   const confidencePercent = Math.round((data.confidence ?? 0) * 100);
-  const overallScore = data.riskScore ?? confidencePercent;
-  const evidenceHighlights =
-    data.evidences && data.evidences.length > 0
-      ? data.evidences.map((evidence, index) => ({
-          tab: evidence.type
-            ? formatEvidenceType(evidence.type, t.evidenceType)
-            : t.evidenceFallbackTab(index + 1),
-          description: evidence.description || t.evidenceNoDescription,
-        }))
-      : [{ tab: t.noEvidenceTab, description: t.noEvidenceDescription }];
+  const riskScore = data.riskScore ?? null;
+  const caption = band ? bandCaption(data, band, t) : t.verdictCaption[verdict];
+  const webOutcome = getWebSearchOutcome(data.webSearch);
+  const legacyLevel = data.verdict
+    ? verdictBand[data.verdict]
+    : riskScore !== null
+      ? scoreBand(riskScore)
+      : "UNDETERMINED";
+  const deepfakeLevel = band ?? legacyLevel;
+  const overallBand = webOutcome === "FOUND" ? raiseBand(deepfakeLevel) : deepfakeLevel;
 
   return {
     ...MOCK_RESULT,
-    deepfakeVerdict: t.verdict[verdict],
-    deepfakeRiskScore: data.riskScore ?? null,
-    deepfakeTone: verdict,
-    deepfakeCaption: t.verdictCaption[verdict],
-    overallScore,
-    overallCaption: t.verdictCaption[verdict],
+    deepfakeVerdict: band ? t.band[band] : t.verdict[verdict],
+    deepfakeRiskScore: riskScore,
+    deepfakeTone: data.verdict ?? undefined,
+    deepfakeBand: band,
+    deepfakeCaption: caption,
+    overallCaption: caption,
+    overallBand,
+    overallWebNote: t.overallWebNote[overallWebNoteKey[webOutcome]],
     modelConfidence: confidencePercent,
     modelConfidenceNote: data.fallbackUsed ? t.fallbackNote : t.modelNote,
-    evidenceHighlights,
-    faceTheftVerdict: t.comingSoon,
-    faceTheftScore: 0,
-    faceTheftCaption: t.faceTheftCaption,
-    webMatchCount: 0,
+    fallbackUsed: data.fallbackUsed ?? false,
+    modelLabel: data.modelName ? t.modelLabel(data.modelName, data.modelVersion ?? null) : null,
+    evidenceHighlights: mapEvidenceHighlights(data, t),
   };
 }
 
@@ -73,8 +139,15 @@ export default function DetectPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [detection, setDetection] = useState<DeepfakeDetectionResponse | null>(null);
+  const [webSearchOff, setWebSearchOff] = useState(false);
   const result: DetectResult = detection ? mapDetection(detection, t) : MOCK_RESULT;
   const resultRef = useRef<HTMLDivElement>(null);
+  const webSearchAbortRef = useRef<AbortController | null>(null);
+  const fileSelectRequestRef = useRef(0);
+
+  useEffect(() => {
+    return () => webSearchAbortRef.current?.abort();
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -87,18 +160,64 @@ export default function DetectPage() {
     return scrollToElement(resultRef.current);
   }, [status]);
 
-  function handleFileSelect(file: File) {
+  async function handleFileSelect(file: File) {
+    const requestId = ++fileSelectRequestRef.current;
+    const tooLarge = await exceedsUploadLimit(file);
+    if (requestId !== fileSelectRequestRef.current) return;
+    if (tooLarge) {
+      toast.error(t.fileTooLarge.title, { description: t.fileTooLarge.description });
+      return;
+    }
     setPreviewUrl(URL.createObjectURL(file));
     setSelectedFile(file);
     setStatus("selected");
   }
 
+  function cancelWebSearch() {
+    webSearchAbortRef.current?.abort();
+    webSearchAbortRef.current = null;
+    webSearchMutation.reset();
+  }
+
   function handleReset() {
+    fileSelectRequestRef.current += 1;
+    cancelWebSearch();
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
     setSelectedFile(null);
     setStatus("idle");
   }
+
+  const webSearchMutation = useMutation({
+    mutationFn: async (detectionId: number): Promise<WebSearchResponse> => {
+      webSearchAbortRef.current?.abort();
+      const controller = new AbortController();
+      webSearchAbortRef.current = controller;
+      const started = await startWebSearch(detectionId);
+      if (started.status !== "PROCESSING") return started;
+      const latest = await pollUntil(
+        () => getDeepfakeDetection(detectionId),
+        (polled) => polled.webSearch?.status !== "PROCESSING",
+        { ...WEB_SEARCH_POLL, signal: controller.signal },
+      );
+      return latest.webSearch ?? started;
+    },
+    onSuccess: (webSearch, detectionId) => {
+      setDetection((prev) =>
+        prev && prev.detectionId === detectionId ? { ...prev, webSearch } : prev,
+      );
+    },
+    onError: (error) => {
+      if (isAbortError(error)) return;
+      if (error instanceof ApiError && error.code === "WEB_SEARCH_DISABLED") {
+        setWebSearchOff(true);
+        return;
+      }
+      toast.error(t.webSearch.failed, {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    },
+  });
 
   const detectMutation = useMutation({
     mutationFn: async () => {
@@ -119,6 +238,8 @@ export default function DetectPage() {
         return;
       }
       setDetection(data);
+      setWebSearchOff(false);
+      cancelWebSearch();
       setStatus("result");
     },
     onError: (error) => {
@@ -128,6 +249,11 @@ export default function DetectPage() {
       });
     },
   });
+
+  function handleWebSearch() {
+    if (!detection || webSearchMutation.isPending) return;
+    webSearchMutation.mutate(detection.detectionId);
+  }
 
   function handleDetect() {
     setStatus("analyzing");
@@ -171,7 +297,14 @@ export default function DetectPage() {
 
           {status === "result" && (
             <div ref={resultRef} className="w-full">
-              <DetectResultSection result={result} previewUrl={previewUrl} />
+              <DetectResultSection
+                result={result}
+                previewUrl={previewUrl}
+                webSearch={detection?.webSearch ?? null}
+                webSearchOff={webSearchOff || detection?.webSearchAvailable === false}
+                webSearchPending={webSearchMutation.isPending}
+                onWebSearch={handleWebSearch}
+              />
             </div>
           )}
         </div>

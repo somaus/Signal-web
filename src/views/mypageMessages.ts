@@ -46,9 +46,6 @@ export const mypageMessages = defineMessages(
       reviewDescription: "아래 내용은 자유롭게 수정할 수 있습니다.",
       aiNotice:
         "AI가 입력 내용을 정리한 문서입니다. 실제 제출 전 날짜, URL, 피해 내용을 한 번 더 확인해 주세요.",
-      fileSimulated:
-        "신고 문서 파일(PDF) 생성은 준비 중입니다. 아래 내용을 확인해 기관에 제출해 주세요.",
-      viewFile: "생성된 신고 문서 파일 보기",
       content: "신고 내용",
       overview: "피해 개요",
       overviewText: (damageType: string) => `${damageType} 피해가 발생한 것으로 보여 신고합니다.`,
@@ -131,9 +128,6 @@ export const mypageMessages = defineMessages(
         reviewDescription: "You can freely edit the content below.",
         aiNotice:
           "AI organized what you entered. Double-check the date, URL, and details before submitting.",
-        fileSimulated:
-          "PDF generation is coming soon. Please review the content below and submit it to an agency.",
-        viewFile: "View the generated report file",
         content: "Report content",
         overview: "Summary",
         overviewText: (damageType) => `I am reporting harm that appears to be ${damageType}.`,
@@ -217,9 +211,6 @@ export const mypageMessages = defineMessages(
         reviewDescription: "以下の内容は自由に修正できます。",
         aiNotice:
           "AIが入力内容を整理した書類です。提出前に日付、URL、被害内容をもう一度確認してください。",
-        fileSimulated:
-          "通報書類ファイル（PDF）の作成は準備中です。以下の内容を確認して機関に提出してください。",
-        viewFile: "作成された通報書類ファイルを見る",
         content: "通報内容",
         overview: "被害の概要",
         overviewText: (damageType) => `${damageType}の被害が発生したと考えられるため通報します。`,
@@ -300,8 +291,6 @@ export const mypageMessages = defineMessages(
         reviewTitle: "请确认举报文件内容",
         reviewDescription: "以下内容可以自由修改。",
         aiNotice: "这是AI整理你输入内容后生成的文件。提交前请再次确认日期、URL和伤害内容。",
-        fileSimulated: "举报文件（PDF）生成功能即将推出。请确认以下内容后提交给机构。",
-        viewFile: "查看生成的举报文件",
         content: "举报内容",
         overview: "伤害概要",
         overviewText: (damageType) => `发生了疑似${damageType}的伤害，特此举报。`,

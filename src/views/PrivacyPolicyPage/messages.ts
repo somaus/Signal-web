@@ -70,7 +70,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
       {
         label: "서비스 이용 정보",
         value:
-          "분석·탐지를 위해 업로드한 사진·영상, 분석·탐지 기록, 저장에 동의한 상담 내역, 신고 문서 내역",
+          "분석·탐지를 위해 업로드한 사진·영상, 분석·탐지 기록, 웹 검색으로 찾은 웹 페이지 주소·제목, 저장에 동의한 상담 내역, 신고 문서 내역",
       },
       { label: "자동 생성 정보", value: "접속 기록, 브라우저 및 기기 정보, 서비스 이용 시간" },
     ],
@@ -82,11 +82,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
       "문의 대응과 서비스 관련 안내",
     ],
     retention:
-      "개인정보는 이용 목적이 달성되면 지체 없이 삭제하는 것을 원칙으로 합니다. 회원 정보는 회원 탈퇴 시 삭제하며, 관계 법령에 따라 보존 의무가 있는 정보는 정해진 기간 동안 별도로 보관합니다. 다만 현재는 업로드한 사진·영상과 분석·탐지·상담·신고 기록이 탈퇴 후에도 서버에 남을 수 있으며, 업로드 파일에 관한 내용은 8항을 따릅니다.",
+      "개인정보는 이용 목적이 달성되면 지체 없이 삭제하는 것을 원칙으로 합니다. 회원 탈퇴 시 계정 정보와 프로필 사진, 업로드한 사진·영상(보호 처리 이미지, 모니터링 기준 이미지, 신고 증거 파일 포함), 분석·탐지·보호·모니터링·상담·신고 기록, 웹 검색 기록을 삭제하며, 관계 법령에 따라 보존 의무가 있는 정보는 정해진 기간 동안 별도로 보관합니다. 다만 웹 역이미지 검색을 위해 외부 검색 서비스로 전송된 사진은 해당 서비스의 방침에 따라 처리됩니다(8항 참고).",
     deletedRecords: {
       title: "사용자가 삭제한 기록",
       description:
-        "삭제한 상담 내역, 분석 결과 및 신고 문서 기록은 서비스에서 다시 조회할 수 없도록 삭제합니다. 다만 기록에 쓰인 사진·영상 파일은 8항에 따라 서버에 남을 수 있습니다.",
+        "삭제한 분석·탐지·보호·모니터링·상담·신고 기록은 기록에 쓰인 사진·영상 파일과 함께 삭제되며, 서비스에서 다시 조회할 수 없습니다. 다만 웹 역이미지 검색을 위해 외부 검색 서비스로 전송된 사진은 해당 서비스의 방침에 따라 처리됩니다.",
     },
     thirdParty:
       "원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 법률에 특별한 규정이 있거나 이용자가 사전에 동의한 경우에만 필요한 범위에서 제공합니다.",
@@ -109,7 +109,12 @@ export const privacyMessages = defineMessages<PrivacyText>(
       {
         heading: "이미지 및 영상 분석",
         description:
-          "업로드한 사진·영상은 분석·탐지 결과와 함께 서버에 저장됩니다. 현재는 자동 삭제 기간이 정해져 있지 않아, 기록을 삭제하거나 회원 탈퇴를 해도 파일이 서버에 남을 수 있습니다. 보관 기간과 삭제 절차가 정해지면 이 방침을 개정해 안내합니다.",
+          "업로드한 사진·영상은 분석·탐지 결과와 함께 서버에 저장되며, 기록을 삭제하거나 회원 탈퇴를 하면 함께 삭제됩니다. 다만 웹 역이미지 검색을 위해 외부 검색 서비스로 전송된 사진은 해당 서비스의 방침에 따라 처리됩니다. 기록을 삭제하지 않은 경우의 자동 삭제 기간이 정해지면 이 방침을 개정해 안내합니다.",
+      },
+      {
+        heading: "웹 역이미지 검색",
+        description:
+          "딥페이크 탐지 결과에서 '동의하고 웹에서 찾아보기'를 누르거나 '동의하고 모니터링 시작'을 누른 경우, 같은 이미지가 실린 웹 페이지를 찾기 위해 사진이 국외의 검색 서비스로 전송됩니다. 탐지 결과의 검색은 SerpApi, LLC(미국, serpapi.com)를 거쳐 Google 검색으로 전송되며, 버튼을 누를 때 한 번, 서비스가 사진을 추측할 수 없는 임시 주소로 최대 5분 동안 열어 SerpApi가 가져가게 하고 검색이 끝나면 주소를 바로 닫습니다. 유포 모니터링은 Google LLC(미국, cloud.google.com)의 Google Cloud Vision으로, 시작할 때와 이후 중지할 때까지 하루 한 번 사진을 암호화된 연결(HTTPS)로 직접 전송합니다. 서비스는 검색으로 찾은 웹 페이지 주소와 제목을 저장하며, 탐지 결과의 검색 기록은 30일이 지나면 삭제합니다. 받는 자가 사진을 보유·이용하는 기간은 각 사의 개인정보처리방침을 따릅니다. 버튼을 누르지 않으면 사진은 전송되지 않으며, 이 경우 웹 검색 결과 없이 탐지 결과만 제공됩니다.",
       },
       {
         heading: "전문 기관 연결",
@@ -160,7 +165,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           label: "Service usage information",
           value:
-            "Photos and videos uploaded for analysis or detection, analysis and detection history, chat history you agreed to save, report document history",
+            "Photos and videos uploaded for analysis or detection, analysis and detection history, addresses and titles of web pages found by web search, chat history you agreed to save, report document history",
         },
         {
           label: "Automatically generated information",
@@ -175,11 +180,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "Responding to inquiries and sending service-related notices",
       ],
       retention:
-        "As a rule, we delete personal information without delay once its purpose has been fulfilled. Account information is deleted when you delete your account, and information that must be preserved under applicable laws is stored separately for the required period. However, uploaded photos and videos and your analysis, detection, chat, and report records may currently remain on our servers after you delete your account. Uploaded files are handled as described in Section 8.",
+        "As a rule, we delete personal information without delay once its purpose has been fulfilled. When you delete your account, we delete your account information and profile photo, uploaded photos and videos (including protected images, monitoring reference images, and report evidence files), your analysis, detection, protection, monitoring, chat, and report records, and your web search records. Information that must be preserved under applicable laws is stored separately for the required period. However, photos sent to external search services for reverse image search are handled under those services' policies (see Section 8).",
       deletedRecords: {
         title: "Records you delete",
         description:
-          "Chat history, analysis results, and report document records you delete are removed so that they can no longer be viewed in the service. However, the photo and video files used in those records may remain on our servers as described in Section 8.",
+          "Analysis, detection, protection, monitoring, chat, and report records you delete are removed together with the photo and video files used in them, and can no longer be viewed in the service. Photos sent to external search services for reverse image search are handled under those services' policies.",
       },
       thirdParty:
         "As a rule, we do not provide your personal information to outside parties. We provide it only to the extent necessary when required by law or when you have given prior consent.",
@@ -202,7 +207,12 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "Image and video analysis",
           description:
-            "Uploaded photos and videos are stored on our servers together with the analysis or detection results. No automatic deletion period has been set yet, so files may remain on our servers even after you delete the records or your account. Once a retention period and deletion procedure are set, we will update this policy.",
+            "Uploaded photos and videos are stored on our servers together with the analysis or detection results, and are deleted when you delete the records or your account. Photos sent to external search services for reverse image search are handled under those services' policies. Once an automatic deletion period is set for records you keep, we will update this policy.",
+        },
+        {
+          heading: "Reverse image search on the web",
+          description:
+            "If you press 'Agree and search the web' on a deepfake detection result or 'Agree and start monitoring', your photo is sent to a search service outside Korea to find web pages where the same image appears. Detection-result searches go to Google Search through SerpApi, LLC (United States, serpapi.com) once, when you press the button: the service opens the photo at a temporary, unguessable address for up to 5 minutes so SerpApi can fetch it, and closes the address as soon as the search ends. Spread monitoring sends the photo directly over an encrypted connection (HTTPS) to Google Cloud Vision by Google LLC (United States, cloud.google.com) when you start it and once a day until you stop it. We store the addresses and titles of the web pages found, and delete detection-result search records after 30 days. How long the recipients keep and use the photo follows each company's privacy policy. If you don't press the button, your photo isn't sent, and you'll get the detection result without web search results.",
         },
         {
           heading: "Connecting to agencies",
@@ -252,7 +262,7 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           label: "サービス利用情報",
           value:
-            "分析・検出のためにアップロードされた写真・動画、分析・検出の記録、保存に同意した相談履歴、通報書類の履歴",
+            "分析・検出のためにアップロードされた写真・動画、分析・検出の記録、Web検索で見つかったWebページのアドレス・タイトル、保存に同意した相談履歴、通報書類の履歴",
         },
         {
           label: "自動生成情報",
@@ -267,11 +277,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "お問い合わせへの対応とサービスに関するご案内",
       ],
       retention:
-        "個人情報は利用目的を達成した後、遅滞なく削除することを原則とします。会員情報は退会時に削除し、関係法令により保存義務がある情報は定められた期間、別途保管します。ただし現在、アップロードされた写真・動画と分析・検出・相談・通報の記録は、退会後もサーバーに残る場合があります。アップロードされたファイルについては第8項に従います。",
+        "個人情報は利用目的を達成した後、遅滞なく削除することを原則とします。退会時にはアカウント情報とプロフィール写真、アップロードした写真・動画（保護処理した画像、モニタリングの基準画像、通報の証拠ファイルを含む）、分析・検出・保護・モニタリング・相談・通報の記録、Web検索の記録を削除し、関係法令により保存義務がある情報は定められた期間、別途保管します。ただし、Web逆画像検索のために外部の検索サービスへ送信された写真は、各サービスの方針に従って処理されます（第8項参照）。",
       deletedRecords: {
         title: "利用者が削除した記録",
         description:
-          "削除された相談履歴、分析結果および通報書類の記録は、サービス上で再び閲覧できないよう削除します。ただし、記録に使われた写真・動画ファイルは第8項のとおりサーバーに残る場合があります。",
+          "削除された分析・検出・保護・モニタリング・相談・通報の記録は、記録に使われた写真・動画ファイルとともに削除され、サービス上で再び閲覧できなくなります。ただし、Web逆画像検索のために外部の検索サービスへ送信された写真は、各サービスの方針に従って処理されます。",
       },
       thirdParty:
         "原則として、利用者の個人情報を外部に提供しません。法律に特別な定めがある場合、または利用者の事前の同意がある場合に限り、必要な範囲で提供します。",
@@ -294,7 +304,12 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "画像・動画の分析",
           description:
-            "アップロードされた写真・動画は、分析・検出結果とともにサーバーに保存されます。現在は自動削除の期間が定められていないため、記録を削除したり退会したりしても、ファイルがサーバーに残る場合があります。保管期間と削除手続きが決まり次第、本ポリシーを改定してお知らせします。",
+            "アップロードされた写真・動画は、分析・検出結果とともにサーバーに保存され、記録を削除したり退会したりすると一緒に削除されます。ただし、Web逆画像検索のために外部の検索サービスへ送信された写真は、各サービスの方針に従って処理されます。記録を削除しない場合の自動削除の期間が決まり次第、本ポリシーを改定してお知らせします。",
+        },
+        {
+          heading: "Web逆画像検索",
+          description:
+            "ディープフェイク検出の結果で「同意してWebで探す」または「同意してモニタリングを開始」を押した場合、同じ画像が掲載されたWebページを探すために写真が国外の検索サービスへ送信されます。検出結果の検索はSerpApi, LLC（米国、serpapi.com）を通じてGoogle検索へ送信され、ボタンを押したときに1回、サービスが推測できない一時アドレスで写真を最大5分間公開してSerpApiが取得できるようにし、検索が終わるとすぐにアドレスを閉じます。拡散モニタリングはGoogle LLC（米国、cloud.google.com）のGoogle Cloud Visionへ、開始時と停止するまで1日1回、暗号化された接続（HTTPS）で写真を直接送信します。サービスは検索で見つかったWebページのアドレスとタイトルを保存し、検出結果の検索記録は30日経過後に削除します。受領者が写真を保有・利用する期間は各社のプライバシーポリシーに従います。ボタンを押さなければ写真は送信されず、その場合はWeb検索の結果なしで検出結果のみを提供します。",
         },
         {
           heading: "専門機関へのおつなぎ",
@@ -341,7 +356,8 @@ export const privacyMessages = defineMessages<PrivacyText>(
         },
         {
           label: "服务使用信息",
-          value: "为分析与检测而上传的照片和视频、分析与检测记录、同意保存的咨询记录、举报文件记录",
+          value:
+            "为分析与检测而上传的照片和视频、分析与检测记录、通过网络搜索找到的网页地址和标题、同意保存的咨询记录、举报文件记录",
         },
         { label: "自动生成信息", value: "访问记录、浏览器及设备信息、服务使用时间" },
       ],
@@ -353,11 +369,11 @@ export const privacyMessages = defineMessages<PrivacyText>(
         "回复咨询并发送服务相关通知",
       ],
       retention:
-        "原则上，个人信息在使用目的达成后将立即删除。会员信息在注销账号时删除；根据相关法律法规须保存的信息，将在规定期限内另行保存。但目前，上传的照片和视频以及分析、检测、咨询、举报记录在注销账号后仍可能保留在服务器上。上传文件的处理遵循第8项。",
+        "原则上，个人信息在使用目的达成后将立即删除。注销账号时，我们会删除账号信息和头像、上传的照片和视频（包括保护处理后的图片、监测基准图片、举报证据文件）、分析、检测、保护、监测、咨询、举报记录以及网络搜索记录；根据相关法律法规须保存的信息，将在规定期限内另行保存。但为进行网络以图搜图而发送到外部搜索服务的照片，将按照相应服务的政策处理（参见第8项）。",
       deletedRecords: {
         title: "用户删除的记录",
         description:
-          "已删除的咨询记录、分析结果及举报文件记录将被删除，无法再在服务中查看。但这些记录所使用的照片和视频文件可能会按照第8项保留在服务器上。",
+          "已删除的分析、检测、保护、监测、咨询、举报记录会连同其中使用的照片和视频文件一起删除，无法再在服务中查看。但为进行网络以图搜图而发送到外部搜索服务的照片，将按照相应服务的政策处理。",
       },
       thirdParty:
         "原则上不向外部提供用户的个人信息。仅在法律有特别规定或用户事先同意的情况下，在必要范围内提供。",
@@ -379,7 +395,12 @@ export const privacyMessages = defineMessages<PrivacyText>(
         {
           heading: "图片与视频分析",
           description:
-            "上传的照片和视频会与分析、检测结果一起保存在服务器上。目前尚未设定自动删除期限，因此即使删除记录或注销账号，文件仍可能保留在服务器上。保存期限和删除流程确定后，我们将修订本政策并另行通知。",
+            "上传的照片和视频会与分析、检测结果一起保存在服务器上，删除记录或注销账号时会一并删除。但为进行网络以图搜图而发送到外部搜索服务的照片，将按照相应服务的政策处理。未删除的记录的自动删除期限确定后，我们将修订本政策并另行通知。",
+        },
+        {
+          heading: "网络以图搜图",
+          description:
+            "如果您在深度伪造检测结果中点击“同意并在网络上查找”，或点击“同意并开始监测”，为查找刊登相同图片的网页，照片会被发送到境外的搜索服务。检测结果的搜索经由 SerpApi, LLC（美国，serpapi.com）发送到 Google 搜索，在您点击按钮时进行一次：服务会用无法猜测的临时地址公开照片最多 5 分钟，供 SerpApi 获取，搜索结束后立即关闭该地址。传播监测会在开始时以及停止前每天一次，通过加密连接（HTTPS）将照片直接发送到 Google LLC（美国，cloud.google.com）的 Google Cloud Vision。服务会保存通过搜索找到的网页地址和标题，检测结果的搜索记录将在 30 天后删除。接收方保存和使用照片的期限遵循各公司的隐私政策。如果您不点击按钮，照片不会被发送，此时仅提供不含网络搜索结果的检测结果。",
         },
         {
           heading: "对接专业机构",

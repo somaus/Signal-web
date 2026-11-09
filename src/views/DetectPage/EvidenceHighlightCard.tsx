@@ -26,7 +26,7 @@ export default function EvidenceHighlightCard({
           const isActive = index === activeIndex;
           return (
             <button
-              key={highlight.tab}
+              key={`${index}-${highlight.tab}`}
               type="button"
               onClick={() => setActiveIndex(index)}
               className={`text-small h-9 min-w-[96px] shrink-0 rounded-t-lg border-t border-r border-l bg-white px-3 font-medium whitespace-nowrap transition-colors duration-200 md:min-w-[120px] ${

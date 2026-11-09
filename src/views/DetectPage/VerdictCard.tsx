@@ -3,7 +3,8 @@
 import Warning from "@/shared/asset/svg/Warning";
 import SuspicionBanner from "@/shared/ui/SuspicionBanner";
 import { useT } from "@/shared/i18n/I18nProvider";
-import type { DeepfakeVerdict } from "./detectApi";
+import { bandClass } from "./bandStyle";
+import type { DeepfakeBand, DeepfakeVerdict } from "./detectApi";
 import { detectMessages } from "./messages";
 
 const toneClass: Record<DeepfakeVerdict, { bg: string; text: string }> = {
@@ -34,6 +35,8 @@ interface VerdictCardProps {
   caption: string;
   /** 판정 코드가 있으면 색을 점수 크기 대신 판정으로 정한다. */
   tone?: DeepfakeVerdict;
+  band?: DeepfakeBand | null;
+  scoreText?: string;
   suspicion?: boolean;
   unsupported?: boolean;
 }
@@ -46,11 +49,13 @@ export default function VerdictCard({
   scoreSuffix,
   caption,
   tone,
+  band,
+  scoreText,
   suspicion = false,
   unsupported = false,
 }: VerdictCardProps) {
   const t = useT(detectMessages).result;
-  const style = toneClass[tone ?? scoreToTone(score ?? 0)];
+  const style = band ? bandClass[band] : toneClass[tone ?? scoreToTone(score ?? 0)];
 
   if (unsupported) {
     return (
@@ -83,8 +88,8 @@ export default function VerdictCard({
       <div className="flex flex-col gap-3">
         <p className="text-body-1 text-gray-800">{scoreLabel}</p>
         <p className={`text-h2 md:text-h1 font-bold ${style.text}`}>
-          {score ?? "-"}
-          {score !== null && (
+          {scoreText ?? score ?? "-"}
+          {scoreText === undefined && score !== null && (
             <span className="text-h3 font-semibold text-gray-500">{scoreSuffix}</span>
           )}
         </p>

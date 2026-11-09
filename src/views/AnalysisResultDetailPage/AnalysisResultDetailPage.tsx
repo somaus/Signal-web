@@ -2,12 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { toast } from "sonner";
-import { getAssessment } from "@/entities/analysis/api";
-import { mapAssessment, type AnalysisResult } from "@/entities/analysis/model";
+import { getAssessment, isCompletedAssessment } from "@/entities/analysis/api";
+import { mapAssessment } from "@/entities/analysis/model";
+import { shareAnalysisResult } from "@/features/analysis-share/shareAnalysisResult";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Share from "@/shared/asset/svg/Share";
 import BackButton from "@/shared/ui/BackButton";
+import LinkButton from "@/shared/ui/LinkButton";
 import { useIsLoggedIn } from "@/shared/lib/useIsLoggedIn";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -19,46 +20,13 @@ import RiskFactorList from "./RiskFactorList";
 import RiskLevelCard from "./RiskLevelCard";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { resultMessages } from "./messages";
-import { translate } from "@/shared/i18n/currentLocale";
 import { uiMessages } from "@/shared/ui/messages";
+
+const PROCESSING_REFETCH_MS = 3000;
+const MAX_PROCESSING_REFETCHES = 110;
 
 interface AnalysisResultDetailPageProps {
   id: string;
-}
-
-function buildShareText(result: AnalysisResult) {
-  const t = translate(resultMessages);
-  const level = translate(uiMessages).riskLevel[result.level];
-  const topFactors = [...result.factors]
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
-    .map((factor) => `- ${factor.title} ${factor.score}%`);
-  return [
-    t.shareHeading,
-    t.shareRisk(level, result.score),
-    result.description.replace(/\n/g, " "),
-    ...(topFactors.length > 0 ? ["", t.shareTopFactors, ...topFactors] : []),
-  ].join("\n");
-}
-
-async function shareResult(result: AnalysisResult) {
-  const t = translate(resultMessages);
-  const text = buildShareText(result);
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: t.shareTitle, text });
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
-      toast.error(t.shareFailed);
-    }
-    return;
-  }
-  try {
-    await navigator.clipboard.writeText(text);
-    toast.success(t.copied);
-  } catch {
-    toast.error(t.copyFailed);
-  }
 }
 
 export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPageProps) {
@@ -77,14 +45,20 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
     queryKey: ["riskAssessments", assessmentId],
     queryFn: () => getAssessment(assessmentId),
     enabled: Number.isFinite(assessmentId),
+    refetchInterval: (query) =>
+      query.state.data?.status === "PROCESSING" &&
+      query.state.dataUpdateCount < MAX_PROCESSING_REFETCHES
+        ? PROCESSING_REFETCH_MS
+        : false,
   });
 
-  const result = assessment ? mapAssessment(assessment, locale) : null;
+  const result =
+    assessment && isCompletedAssessment(assessment) ? mapAssessment(assessment, locale) : null;
 
   return (
     <>
       <SiteHeader className="max-md:hidden print:hidden" />
-      <ResultMobileHeader onShare={result ? () => shareResult(result) : undefined} />
+      <ResultMobileHeader onShare={result ? () => shareAnalysisResult(result) : undefined} />
       <main
         className={`flex w-full flex-col items-center bg-gray-100 px-5 py-5 md:bg-white md:py-10 md:pb-[120px] ${
           result ? "max-md:pb-[184px]" : "max-md:pb-10"
@@ -113,7 +87,7 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
               {result && (
                 <button
                   type="button"
-                  onClick={() => shareResult(result)}
+                  onClick={() => shareAnalysisResult(result)}
                   className="text-body-2 text-primary-500 border-primary-500 hover:bg-primary-50 flex h-[50px] shrink-0 cursor-pointer items-center gap-2 rounded border px-5 transition-colors print:hidden [&>svg]:h-4 [&>svg]:w-3.5"
                 >
                   <Share />
@@ -137,6 +111,37 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
               {error instanceof Error ? ` (${error.message})` : ""}
             </p>
           )}
+
+          {assessment && !result && assessment.status === "PROCESSING" && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="flex flex-col items-start gap-3 rounded-2xl border border-gray-300 bg-white p-5 md:p-8"
+            >
+              <p className="text-body-1 font-semibold text-black">{t.processingTitle}</p>
+              <p className="text-body-2 text-gray-700">{t.processingDescription}</p>
+            </div>
+          )}
+
+          {assessment && !result && assessment.status === "FAILED" && (
+            <div className="flex flex-col items-start gap-3 rounded-2xl border border-gray-300 bg-white p-5 md:p-8">
+              <p className="text-body-1 font-semibold text-black">{t.failedTitle}</p>
+              <p className="text-body-2 text-gray-700">
+                {(assessment.failureReason && t.failure[assessment.failureReason]) ||
+                  t.failedFallback}
+              </p>
+              <LinkButton href="/analyze" variant="primary" className="mt-2">
+                {t.analyzeAgain}
+              </LinkButton>
+            </div>
+          )}
+
+          {assessment &&
+            !result &&
+            assessment.status !== "PROCESSING" &&
+            assessment.status !== "FAILED" && (
+              <p className="text-body-1 text-red-500">{t.loadFailed}</p>
+            )}
 
           {assessment && result && (
             <>
