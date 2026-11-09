@@ -147,12 +147,14 @@ export function useAnalyzeFlow() {
     },
     onSuccess: (data) => {
       if (data.status === "FAILED" && data.failureReason !== "NO_FACE_DETECTED") {
+        setAssessmentId(null);
         setStatus("selected");
         const reason = data.failureReason ? t.flow.failure[data.failureReason] : undefined;
         toast.error(t.flow.analyzeFailed, { description: reason ?? t.flow.retry });
         return;
       }
       if (data.status === "FAILED" || !data.faceDetected) {
+        setAssessmentId(null);
         setStatus("error");
         return;
       }
@@ -164,6 +166,7 @@ export function useAnalyzeFlow() {
     },
     onError: (error) => {
       if (isAbortError(error)) return;
+      setAssessmentId(null);
       setStatus("selected");
       showError(t.flow.analyzeFailed, error, t.flow.loginAndRetry);
     },
@@ -225,6 +228,7 @@ export function useAnalyzeFlow() {
   });
 
   function handleAnalyze() {
+    setAssessmentId(null);
     setStatus("analyzing");
     analyzeMutation.mutate(null);
   }
