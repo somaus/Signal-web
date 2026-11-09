@@ -3,16 +3,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getAgencies } from "@/entities/agency/api";
+import { getReport } from "@/entities/report/api";
 import PageHeading from "@/shared/ui/PageHeading";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
 import AgencyCard from "./AgencyCard";
+import AttachedReportCard from "./AttachedReportCard";
 import { situationTypes, useSituationCategories } from "./situationCategories";
 import SituationSelect from "./SituationSelect";
 import { useT } from "@/shared/i18n/I18nProvider";
 import { referralMessages } from "./messages";
 
-export default function SupportReferralPage() {
+interface SupportReferralPageProps {
+  reportId: number | null;
+}
+
+export default function SupportReferralPage({ reportId }: SupportReferralPageProps) {
   const t = useT(referralMessages);
   const situationCategories = useSituationCategories();
   const [selectedType, setSelectedType] = useState(situationTypes[0]);
@@ -30,6 +36,14 @@ export default function SupportReferralPage() {
     queryFn: () => getAgencies(selectedType),
   });
 
+  const { data: report } = useQuery({
+    queryKey: ["reports", reportId],
+    queryFn: () => getReport(reportId as number),
+    enabled: reportId !== null,
+    retry: false,
+  });
+  const attachedReportId = report?.reportId;
+
   return (
     <>
       <SiteHeader />
@@ -40,6 +54,8 @@ export default function SupportReferralPage() {
             description={t.description}
             breadcrumbs={[{ label: t.chatbot, href: "/chat" }, { label: t.title }]}
           />
+
+          {attachedReportId !== undefined && <AttachedReportCard reportId={attachedReportId} />}
 
           <div className="bg-primary-50 flex flex-col items-start justify-between gap-5 rounded-2xl p-5 sm:flex-row md:gap-6 md:p-6">
             <div className="flex flex-col gap-1">
@@ -80,7 +96,7 @@ export default function SupportReferralPage() {
             {agencies && agencies.length > 0 && (
               <div className="flex flex-col gap-4">
                 {agencies.map((agency) => (
-                  <AgencyCard key={agency.agencyId} agency={agency} />
+                  <AgencyCard key={agency.agencyId} agency={agency} reportId={attachedReportId} />
                 ))}
               </div>
             )}

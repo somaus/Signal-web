@@ -73,7 +73,7 @@ export default function ReportPage() {
   }
 
   function handleFindAgency() {
-    router.push("/support-referral");
+    router.push(reportId === null ? "/support-referral" : `/support-referral?reportId=${reportId}`);
   }
 
   return (

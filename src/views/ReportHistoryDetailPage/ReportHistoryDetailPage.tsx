@@ -226,7 +226,7 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
   }
 
   function handleFindAgency() {
-    router.push("/support-referral");
+    router.push(`/support-referral?reportId=${reportId}`);
   }
 
   return (
@@ -396,13 +396,15 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                     </>
                   ) : (
                     <>
-                      <button
-                        type="button"
-                        onClick={startEditing}
-                        className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 items-center justify-center rounded border px-6 transition-colors"
-                      >
-                        {t.edit}
-                      </button>
+                      {report.status === "DRAFT" && (
+                        <button
+                          type="button"
+                          onClick={startEditing}
+                          className="border-primary-500 text-primary-500 text-body-2 active:bg-primary-50 flex h-12 items-center justify-center rounded border px-6 transition-colors"
+                        >
+                          {t.edit}
+                        </button>
+                      )}
                       {report.status === "DRAFT" && (
                         <button
                           type="button"
