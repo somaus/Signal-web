@@ -31,6 +31,15 @@ npx expo start
 - **Expo Go (기본)**: 일반적인 시연. 휴대폰에 Expo Go를 설치하고 PC와 같은 와이파이에 연결합니다.
 - **EAS preview APK**: Expo Go를 쓸 수 없는 Android 기기용. Expo 계정과 `eas-cli`가 필요하고 빌드에 몇 분 걸립니다.
 
+APK는 `eas.json`의 `preview` 프로필로 만듭니다. 배포 서버(https)를 바라보도록 환경변수가 들어 있습니다. 처음 한 번은 `eas init`으로 프로젝트를 Expo 계정에 연결해야 하며, 이 과정에서 `app.json`에 `extra.eas.projectId`가 추가됩니다.
+
+```bash
+npm install -g eas-cli
+eas login
+eas init                                          # 처음 한 번
+eas build --profile preview --platform android    # 끝나면 APK 다운로드 링크가 나옵니다
+```
+
 ## 폴더 구조
 
 웹과 같은 Feature-Sliced Design 구조입니다. import 방향은 `app → views → widgets → features → entities → shared` 한쪽으로만 둡니다.
