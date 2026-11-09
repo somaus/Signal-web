@@ -22,6 +22,9 @@ import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { resultMessages } from "./messages";
 import { uiMessages } from "@/shared/ui/messages";
 
+const PROCESSING_REFETCH_MS = 3000;
+const MAX_PROCESSING_REFETCHES = 110;
+
 interface AnalysisResultDetailPageProps {
   id: string;
 }
@@ -42,7 +45,11 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
     queryKey: ["riskAssessments", assessmentId],
     queryFn: () => getAssessment(assessmentId),
     enabled: Number.isFinite(assessmentId),
-    refetchInterval: (query) => (query.state.data?.status === "PROCESSING" ? 3000 : false),
+    refetchInterval: (query) =>
+      query.state.data?.status === "PROCESSING" &&
+      query.state.dataUpdateCount < MAX_PROCESSING_REFETCHES
+        ? PROCESSING_REFETCH_MS
+        : false,
   });
 
   const result =
