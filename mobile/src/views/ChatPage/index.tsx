@@ -48,6 +48,9 @@ export default function ChatPage() {
     onCrisis: () => setAgencySheet({ situationType: "CRISIS" }),
   });
   const { resume, resumedId } = chat;
+  // 이미 처리한(불러왔거나, 취소했거나, 새 상담으로 넘긴) 이어서 대화하기 ID.
+  // 상태 변경과 화면 주소 변경이 다른 렌더에 반영돼도 같은 상담을 다시 불러오지 않게 막는다.
+  const handledResumeRef = useRef<string | null>(null);
 
   const history = useQuery({
     queryKey: ["chats", "messages", resumeId],
@@ -57,12 +60,19 @@ export default function ChatPage() {
   });
 
   useEffect(() => {
-    if (!resumeId || !history.data || history.isFetching) return;
-    if (resumedId === resumeId) return;
+    if (!resumeId) {
+      handledResumeRef.current = null;
+      return;
+    }
+    if (!history.data || history.isFetching) return;
+    if (handledResumeRef.current === resumeId || resumedId === resumeId) return;
+    handledResumeRef.current = resumeId;
     void resume(resumeId, history.data.messages);
   }, [resumeId, resumedId, history.data, history.isFetching, resume]);
 
   function startNewChat() {
+    // 주소의 sessionId가 지워지기 전 렌더에서 이전 상담이 다시 열리지 않게 먼저 처리한 것으로 둔다.
+    if (resumeId) handledResumeRef.current = resumeId;
     chat.reset();
     setDraft("");
     if (resumeId) router.setParams({ sessionId: undefined });
