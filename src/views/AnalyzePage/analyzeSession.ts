@@ -29,7 +29,9 @@ export const EMPTY_SESSION: AnalyzeSession = {
 let saved: AnalyzeSession = EMPTY_SESSION;
 
 export function loadAnalyzeSession(): AnalyzeSession {
-  return saved.status === "analyzing" ? { ...saved, status: "selected" } : saved;
+  return saved.status === "analyzing" && saved.assessmentId === null
+    ? { ...saved, status: "selected" }
+    : saved;
 }
 
 export function saveAnalyzeSession(session: AnalyzeSession) {
