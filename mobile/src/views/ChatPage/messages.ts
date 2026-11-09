@@ -19,6 +19,12 @@ export const chatMessages = defineMessages(
       "이 대화를 닫고 새 상담을 시작해요. 저장된 대화는 '내 대화 내역'에서 다시 볼 수 있어요.",
     restart: "새로 시작",
     cancel: "취소",
+    resumeConfirm: {
+      title: "이전 상담을 이어서 열까요?",
+      description:
+        "지금 진행 중인 대화는 이 화면에서 사라져요. 저장에 동의한 대화는 '내 대화 내역'에 남아 있어요.",
+      confirm: "이어서 열기",
+    },
     loadingHistory: "이전 대화를 불러오는 중이에요",
     historyFailed: "이전 대화를 불러오지 못했습니다.",
     privacy: {
@@ -88,6 +94,12 @@ export const chatMessages = defineMessages(
         "This closes the current chat and starts a new one. Saved chats stay in 'My chats'.",
       restart: "Start new",
       cancel: "Cancel",
+      resumeConfirm: {
+        title: "Open the earlier chat?",
+        description:
+          "Your current conversation will disappear from this screen. Chats you agreed to save stay in 'My chats'.",
+        confirm: "Open",
+      },
       loadingHistory: "Loading your earlier chat",
       historyFailed: "Couldn't load the earlier chat.",
       privacy: {
