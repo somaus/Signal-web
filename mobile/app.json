@@ -15,10 +15,8 @@
     "android": {
       "package": "kr.somaus.signal",
       "adaptiveIcon": {
-        "backgroundColor": "#edf3f8",
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#202e64"
       },
       "predictiveBackGestureEnabled": false
     },
