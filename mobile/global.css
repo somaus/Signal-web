@@ -1,0 +1,75 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+
+@import "nativewind/theme";
+
+/*
+ * 디자인 토큰: 웹(Signal-web/src/app/globals.css)의 @theme 값을 그대로 옮긴 것.
+ * 웹 값이 바뀌면 이 파일도 같이 바꾼다.
+ */
+@theme {
+  --color-primary-900: #212529;
+  --color-primary-800: #14222e;
+  --color-primary-700: #1c3042;
+  --color-primary-600: #253e54;
+  --color-primary-500: #2d4b66;
+  --color-primary-450: #466c8c;
+  --color-primary-400: #608db1;
+  --color-primary-300: #9bbbd5;
+  --color-primary-200: #bcd1e3;
+  --color-primary-100: #dce7f0;
+  --color-primary-50: #edf3f8;
+
+  --color-secondary-900: #5f4870;
+  --color-secondary-800: #86689c;
+  --color-secondary-700: #a383b7;
+  --color-secondary-600: #bc9dcf;
+  --color-secondary-500: #d4b7e6;
+  --color-secondary-400: #d9cce0;
+  --color-secondary-300: #e2bfea;
+  --color-secondary-200: #ecd5f2;
+  --color-secondary-100: #f5eaf9;
+  --color-secondary-50: #faf4fc;
+
+  --color-gray-900: #343a40;
+  --color-gray-800: #343a40;
+  --color-gray-700: #495057;
+  --color-gray-650: #6c757d;
+  --color-gray-600: #acb5bd;
+  --color-gray-500: #ced4da;
+  --color-gray-400: #dee2e6;
+  --color-gray-300: #e9ecef;
+  --color-gray-200: #f1f3f5;
+  --color-gray-100: #f8f9fa;
+
+  /* 폰트: React Native는 굵기별로 폰트 이름이 따로라서 굵기마다 클래스를 둔다. */
+  --font-pretendard: "Pretendard-Regular";
+  --font-pretendard-medium: "Pretendard-Medium";
+  --font-pretendard-semibold: "Pretendard-SemiBold";
+  --font-pretendard-bold: "Pretendard-Bold";
+
+  /* 글자 크기는 웹과 같고, 줄 높이는 웹의 140%/150%를 px로 풀어 쓴다(RN은 % 줄 높이를 못 쓴다). */
+  --text-h1: 48px;
+  --text-h1--line-height: 67px;
+  --text-h2: 36px;
+  --text-h2--line-height: 50px;
+  --text-h3: 24px;
+  --text-h3--line-height: 34px;
+  --text-body-1: 18px;
+  --text-body-1--line-height: 25px;
+  --text-body-2: 16px;
+  --text-body-2--line-height: 22px;
+  --text-large: 16px;
+  --text-large--line-height: 22px;
+  --text-small: 14px;
+  --text-small--line-height: 21px;
+  --text-caption: 12px;
+  --text-caption--line-height: 17px;
+
+  --shadow-sm: 0px 1px 3px 0px rgba(39, 39, 39, 0.05);
+  --shadow-md: 0px 2px 4px 0px rgba(45, 75, 102, 0.1);
+  --shadow-lg: 0px 5px 10px 0px rgba(45, 75, 102, 0.1);
+  --shadow-xl: 0px 12px 20px -2px rgba(45, 75, 102, 0.15);
+  --shadow-2xl: 0px 32px 48px -12px rgba(39, 39, 39, 0.2);
+}
