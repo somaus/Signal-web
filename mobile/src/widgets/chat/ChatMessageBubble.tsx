@@ -8,8 +8,9 @@ import ChatRichText from "./ChatRichText";
 import { chatBubbleMessages } from "./messages";
 import type { ChatMessage } from "./types";
 
-// 웹과 같은 기준: 답변에 신고 얘기가 나오면 신고서 작성으로 이어 준다.
-const REPORT_PATTERN = /신고|report/i;
+// 웹(replyActions.ts)과 같은 기준: 답변에 신고 얘기가 나오면 신고서 작성으로 이어 준다.
+// 앱은 한국어·영어만 지원하지만 서버 답변 언어와 무관하게 같은 결과가 나오도록 웹 패턴을 그대로 쓴다.
+const REPORT_PATTERN = /신고|report|通報|举报/i;
 
 interface ChatMessageBubbleProps {
   message: ChatMessage;
