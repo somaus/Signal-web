@@ -11,6 +11,7 @@ interface ReportDocumentDownloadButtonProps {
   reportId: number;
   variant?: ButtonVariant;
   className?: string;
+  disabled?: boolean;
 }
 
 /** 신고 문서(PDF)는 로그인이 필요한 API라 링크가 아니라 blob으로 받아 저장한다. */
@@ -18,6 +19,7 @@ export default function ReportDocumentDownloadButton({
   reportId,
   variant = "outline",
   className = "",
+  disabled = false,
 }: ReportDocumentDownloadButtonProps) {
   const t = useT(reportDocumentMessages);
 
@@ -41,7 +43,7 @@ export default function ReportDocumentDownloadButton({
       type="button"
       variant={variant}
       className={className}
-      disabled={downloadMutation.isPending}
+      disabled={disabled || downloadMutation.isPending}
       onClick={() => downloadMutation.mutate()}
     >
       {downloadMutation.isPending ? t.downloading : t.download}

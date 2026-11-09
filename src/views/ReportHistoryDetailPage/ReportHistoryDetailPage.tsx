@@ -267,7 +267,11 @@ export default function ReportHistoryDetailPage({ id }: ReportHistoryDetailPageP
                 <NoticeBanner className="w-full max-w-[960px]">{t.aiNotice}</NoticeBanner>
 
                 <div className="flex w-full max-w-[960px] flex-col gap-3">
-                  <ReportDocumentDownloadButton reportId={reportId} className="w-full md:w-fit" />
+                  <ReportDocumentDownloadButton
+                    reportId={reportId}
+                    className="w-full md:w-fit"
+                    disabled={isEditing}
+                  />
                   {!isEditing && <ReportSummary summary={report.summary} />}
                 </div>
 
