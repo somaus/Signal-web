@@ -40,6 +40,10 @@ eas init                                          # 처음 한 번
 eas build --profile preview --platform android    # 끝나면 APK 다운로드 링크가 나옵니다
 ```
 
+iOS는 Apple 개발자 계정이 있어야 설치용 빌드를 만들 수 있어서 시연에서는 Expo Go만 씁니다.
+
+시연 전에 챙길 것, 장면 순서, 대체 자료는 [`docs/demo-checklist.md`](docs/demo-checklist.md)에 정리했습니다.
+
 ## 폴더 구조
 
 웹과 같은 Feature-Sliced Design 구조입니다. import 방향은 `app → views → widgets → features → entities → shared` 한쪽으로만 둡니다.
