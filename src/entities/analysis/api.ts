@@ -54,7 +54,6 @@ export async function createRiskAssessment(file: File): Promise<RiskAssessmentRe
   formData.append("image", file);
   const { data } = await api.post<RiskAssessmentResponse>("/api/v1/risk-assessments", formData, {
     headers: { "Content-Type": "multipart/form-data", ...guestHeaders() },
-    timeout: 60_000,
   });
   return data;
 }
