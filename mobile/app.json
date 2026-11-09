@@ -27,13 +27,10 @@
       },
       "predictiveBackGestureEnabled": false
     },
-    "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro"
-    },
     "plugins": ["expo-router", "expo-secure-store", "expo-font", "expo-localization"],
     "extra": {
       "router": {}
-    }
+    },
+    "platforms": ["ios", "android"]
   }
 }
