@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit 설정. https://docs.coderabbit.ai/reference/configuration
+language: ko-KR
+
+reviews:
+  # 리뷰 진행 상태를 PR에 표시한다.
+  review_status: true
+  # "변경 요청"으로 머지를 막지 않는다. 머지 판단은 사람이 한다.
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    # 이 브랜치로 들어가는 PR을 자동으로 리뷰한다(정규식).
+    base_branches:
+      - main
+      - develop
