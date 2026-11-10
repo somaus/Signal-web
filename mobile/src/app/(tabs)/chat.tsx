@@ -1,8 +1,3 @@
-import { useMessages } from "@/shared/i18n/I18nProvider";
-import ComingSoon from "@/widgets/ComingSoon";
-import { tabMessages } from "@/widgets/messages";
+import ChatPage from "@/views/ChatPage";
 
-export default function ChatTab() {
-  const t = useMessages(tabMessages);
-  return <ComingSoon title={t.chat} />;
-}
+export default ChatPage;
