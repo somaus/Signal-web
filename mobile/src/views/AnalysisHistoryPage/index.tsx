@@ -40,10 +40,15 @@ export default function AnalysisHistoryPage() {
     : local.flatMap((query) => (query.data ? [query.data] : []));
   const loading = loggedIn ? mine.isPending : recent.isPending || local.some((q) => q.isPending);
 
-  if (loggedIn && mine.isError) {
+  const allGuestFailed = !loggedIn && local.length > 0 && local.every((query) => query.isError);
+
+  if ((loggedIn && mine.isError) || allGuestFailed) {
     return (
       <Screen edges={["left", "right"]}>
-        <ErrorView message={t.loadFailed} onRetry={() => mine.refetch()} />
+        <ErrorView
+          message={t.loadFailed}
+          onRetry={() => (loggedIn ? mine.refetch() : local.forEach((query) => query.refetch()))}
+        />
       </Screen>
     );
   }
