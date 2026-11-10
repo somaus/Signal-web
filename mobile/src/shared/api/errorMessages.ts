@@ -39,6 +39,8 @@ interface ErrorText {
   codes: Record<ApiErrorCode, string>;
   timeout: string;
   network: string;
+  /** 파일 업로드가 타임아웃으로 끊겼을 때. */
+  uploadTimeout: string;
   unknown: string;
 }
 
@@ -83,6 +85,8 @@ export const errorMessages = defineMessages<ErrorText>(
     },
     timeout: "응답이 늦어지고 있습니다. 잠시 후 다시 시도해 주세요.",
     network: "네트워크 연결을 확인해 주세요.",
+    uploadTimeout:
+      "파일을 올리는 요청의 응답 시간이 초과됐습니다. 업로드가 이미 처리됐을 수 있으니 기록을 확인한 뒤 다시 시도해 주세요.",
     unknown: "알 수 없는 오류가 발생했습니다.",
   },
   {
@@ -127,6 +131,8 @@ export const errorMessages = defineMessages<ErrorText>(
       },
       timeout: "The response is taking too long. Please try again shortly.",
       network: "Please check your network connection.",
+      uploadTimeout:
+        "The upload request timed out. It may have already been processed, so check your history before trying again.",
       unknown: "An unknown error occurred.",
     },
   },
