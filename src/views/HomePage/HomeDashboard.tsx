@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { getMyAssessments } from "@/entities/analysis/api";
+import { getMyAssessments, isCompletedAssessment } from "@/entities/analysis/api";
 import { useMyProfile } from "@/entities/user/useMyProfile";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import AnalysisStepRow from "@/shared/ui/AnalysisStepRow";
@@ -82,7 +82,9 @@ export default function HomeDashboard() {
         </FrameScale>
       </section>
       <QuickFeaturesSection />
-      <RecentResultsSection results={(assessments ?? []).slice(0, 3)} />
+      <RecentResultsSection
+        results={(assessments ?? []).filter(isCompletedAssessment).slice(0, 3)}
+      />
     </main>
   );
 }

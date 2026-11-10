@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { RiskAssessmentResponse, RiskFactorResponse } from "@/entities/analysis/api";
+import type { CompletedAssessment, RiskFactorResponse } from "@/entities/analysis/api";
 import { RISK_LEVEL_LABEL, factorLabel, factorLabelMessages } from "@/entities/analysis/model";
 import ArrowUp from "@/shared/asset/svg/ArrowUp";
 import LinkButton from "@/shared/ui/LinkButton";
@@ -10,7 +10,7 @@ import { useT } from "@/shared/i18n/I18nProvider";
 import { homeMessages } from "./messages";
 
 interface RecentResultsSectionProps {
-  results: RiskAssessmentResponse[];
+  results: CompletedAssessment[];
 }
 
 function TopFactor({ factors }: { factors: RiskFactorResponse[] }) {

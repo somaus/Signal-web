@@ -2,12 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { getAssessment } from "@/entities/analysis/api";
+import { getAssessment, isCompletedAssessment } from "@/entities/analysis/api";
 import { mapAssessment } from "@/entities/analysis/model";
 import { shareAnalysisResult } from "@/features/analysis-share/shareAnalysisResult";
 import Arrow from "@/shared/asset/svg/Arrow";
 import Share from "@/shared/asset/svg/Share";
 import BackButton from "@/shared/ui/BackButton";
+import LinkButton from "@/shared/ui/LinkButton";
 import { useIsLoggedIn } from "@/shared/lib/useIsLoggedIn";
 import Footer from "@/widgets/Footer";
 import SiteHeader from "@/widgets/SiteHeader";
@@ -20,6 +21,9 @@ import RiskLevelCard from "./RiskLevelCard";
 import { useLocale, useT } from "@/shared/i18n/I18nProvider";
 import { resultMessages } from "./messages";
 import { uiMessages } from "@/shared/ui/messages";
+
+const PROCESSING_REFETCH_MS = 3000;
+const MAX_PROCESSING_REFETCHES = 110;
 
 interface AnalysisResultDetailPageProps {
   id: string;
@@ -41,9 +45,15 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
     queryKey: ["riskAssessments", assessmentId],
     queryFn: () => getAssessment(assessmentId),
     enabled: Number.isFinite(assessmentId),
+    refetchInterval: (query) =>
+      query.state.data?.status === "PROCESSING" &&
+      query.state.dataUpdateCount < MAX_PROCESSING_REFETCHES
+        ? PROCESSING_REFETCH_MS
+        : false,
   });
 
-  const result = assessment ? mapAssessment(assessment, locale) : null;
+  const result =
+    assessment && isCompletedAssessment(assessment) ? mapAssessment(assessment, locale) : null;
 
   return (
     <>
@@ -101,6 +111,37 @@ export default function AnalysisResultDetailPage({ id }: AnalysisResultDetailPag
               {error instanceof Error ? ` (${error.message})` : ""}
             </p>
           )}
+
+          {assessment && !result && assessment.status === "PROCESSING" && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="flex flex-col items-start gap-3 rounded-2xl border border-gray-300 bg-white p-5 md:p-8"
+            >
+              <p className="text-body-1 font-semibold text-black">{t.processingTitle}</p>
+              <p className="text-body-2 text-gray-700">{t.processingDescription}</p>
+            </div>
+          )}
+
+          {assessment && !result && assessment.status === "FAILED" && (
+            <div className="flex flex-col items-start gap-3 rounded-2xl border border-gray-300 bg-white p-5 md:p-8">
+              <p className="text-body-1 font-semibold text-black">{t.failedTitle}</p>
+              <p className="text-body-2 text-gray-700">
+                {(assessment.failureReason && t.failure[assessment.failureReason]) ||
+                  t.failedFallback}
+              </p>
+              <LinkButton href="/analyze" variant="primary" className="mt-2">
+                {t.analyzeAgain}
+              </LinkButton>
+            </div>
+          )}
+
+          {assessment &&
+            !result &&
+            assessment.status !== "PROCESSING" &&
+            assessment.status !== "FAILED" && (
+              <p className="text-body-1 text-red-500">{t.loadFailed}</p>
+            )}
 
           {assessment && result && (
             <>

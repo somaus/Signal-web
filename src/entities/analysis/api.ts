@@ -24,8 +24,8 @@ export type FaceResponse =
 
 export interface RiskAssessmentResponse {
   assessmentId: number;
-  overallRiskLevel: RiskLevel;
-  overallScore: number;
+  overallRiskLevel: RiskLevel | null;
+  overallScore: number | null;
   factors: RiskFactorResponse[];
   recommendations: string[];
   faceDetected: boolean;
@@ -36,12 +36,24 @@ export interface RiskAssessmentResponse {
   failureReason?: string | null;
 }
 
+export type CompletedAssessment = RiskAssessmentResponse & {
+  overallRiskLevel: RiskLevel;
+  overallScore: number;
+};
+
+export function isCompletedAssessment(data: RiskAssessmentResponse): data is CompletedAssessment {
+  return (
+    (data.status === undefined || data.status === "COMPLETED") &&
+    data.overallRiskLevel !== null &&
+    data.overallScore !== null
+  );
+}
+
 export async function createRiskAssessment(file: File): Promise<RiskAssessmentResponse> {
   const formData = new FormData();
   formData.append("image", file);
   const { data } = await api.post<RiskAssessmentResponse>("/api/v1/risk-assessments", formData, {
     headers: { "Content-Type": "multipart/form-data", ...guestHeaders() },
-    timeout: 60_000,
   });
   return data;
 }
