@@ -39,7 +39,8 @@
           "cameraPermission": "분석할 사진을 찍기 위해 카메라를 사용해요.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "./plugins/withOptionalCamera"
     ],
     "extra": {
       "router": {}
