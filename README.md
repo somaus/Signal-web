@@ -74,18 +74,21 @@ Signal은 딥페이크·디지털 성범죄·얼굴 도용 같은 온라인 위�
 
 <h3>아키텍처</h3> <hr>
 
-웹과 앱은 화면과 입력을 맡고, 분석과 판단은 모두 Signal-server가 처리합니다. 서버는 LLM(Groq)과 전용 추론 서비스를 호출하되, 안전과 정확성이 걸린 부분(위기 감지, 기관 추천, 메타데이터 판독, 단계 완료 판정)은 규칙으로 직접 처리합니다.
+웹과 앱은 화면과 사용자 입력을 맡고, 분석과 판단은 모두 Signal-server가 처리합니다. 서버는 LLM(Groq)과 전용 추론 서비스를 호출하고, 안전과 정확성이 중요한 부분(위기 감지, 기관 추천, 메타데이터 판독)은 규칙 기반으로 직접 처리합니다.
 
 ```mermaid
 flowchart LR
     Web["웹 (Next.js)"] --> Server
     App["모바일 앱 (Expo)"] --> Server
     Server["Signal-server<br/>(Spring Boot)"] --> LLM["Groq LLM<br/>(챗봇·비전)"]
-    Server --> Lab["추론 서비스 (선택)<br/>detect-lab · risk-lab · protection-lab"]
+    Server --> Lab["추론 서비스 (선택)<br/>detect-lab<br/>risk-lab<br/>protection-lab"]
     Server --> DB[("MySQL")]
+
+    classDef navy fill:#1E3A8A,color:#FFFFFF
+    class Web,App,Server,LLM,Lab,DB navy
 ```
 
-API 키가 없거나 호출이 실패하면 서버가 룰 기반 응답으로 대체하고, 화면에 참고용 추정치임을 안내합니다.
+API 키가 없거나 호출이 실패하면 서버가 룰 기반 응답으로 대체하고, 이때 화면에 참고용 추정치임을 안내합니다.
 
 <h3>기술 스택</h3> <hr>
 
