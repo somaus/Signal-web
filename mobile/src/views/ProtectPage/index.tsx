@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Image, Linking, Pressable, View } from "react-native";
 import { createProtection, getProtection } from "@/entities/protection/api";
 import { protectionLevels } from "@/entities/protection/model";
@@ -18,7 +18,12 @@ import ErrorView from "@/shared/ui/ErrorView";
 import Screen from "@/shared/ui/Screen";
 import Text from "@/shared/ui/Text";
 import { protectMessages } from "./messages";
-import { absoluteUrl, authHeaders, downloadProtectedImage, removeFile } from "./protectedImageFile";
+import {
+  authHeaders,
+  authorizedImageUrl,
+  downloadProtectedImage,
+  removeFile,
+} from "./protectedImageFile";
 import { saveImageToGallery } from "./saveImage";
 
 const POLL_INTERVAL_MS = 1500;
@@ -89,7 +94,9 @@ function OriginalPreview({ path }: { path?: string }) {
     };
   }, []);
 
-  if (!path || failed) {
+  // API와 다른 주소면 로그인 토큰을 보내지 않도록 불러오지 않고 안내만 보인다.
+  const uri = path ? authorizedImageUrl(path) : null;
+  if (!uri || failed) {
     return (
       <View className="h-56 items-center justify-center rounded-lg bg-gray-100 px-3">
         <Text className="text-center text-caption text-gray-650">{t.originalUnavailable}</Text>
@@ -99,7 +106,7 @@ function OriginalPreview({ path }: { path?: string }) {
   if (!headers) return <View className="h-56 rounded-lg bg-gray-100" />;
   return (
     <Image
-      source={{ uri: absoluteUrl(path), headers }}
+      source={{ uri, headers }}
       resizeMode="contain"
       accessibilityLabel={t.original}
       onError={() => setFailed(true)}
@@ -129,9 +136,22 @@ export default function ProtectPage({ assessmentId }: ProtectPageProps) {
   const status = protection.data?.status;
   const { timedOut, restart } = usePollTimeout(status === "PROCESSING", POLL_TIMEOUT_MS);
 
+  // 다운로드 중에 화면을 떠나도 요청은 끝까지 갈 수 있어서, 그때 받은 파일은 바로 지운다.
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   const image = useQuery({
     queryKey: ["protections", protectionId, "file"],
-    queryFn: () => downloadProtectedImage(protectionId as number),
+    queryFn: async () => {
+      const downloaded = await downloadProtectedImage(protectionId as number);
+      if (!mountedRef.current) removeFile(downloaded);
+      return downloaded;
+    },
     enabled: status === "COMPLETED",
     staleTime: Infinity,
     gcTime: 0,

@@ -15,9 +15,23 @@ export async function authHeaders(): Promise<Record<string, string>> {
   return headers;
 }
 
-/** 서버가 준 경로가 상대 경로면 API 주소를 붙인다. */
-export function absoluteUrl(path: string): string {
-  return /^https?:\/\//i.test(path) ? path : `${API_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+/**
+ * 서버가 준 이미지 경로를 인증 헤더를 붙여도 되는 주소로 바꾼다.
+ * 상대 경로면 API 주소를 붙이고, 절대 주소는 API와 같은 origin일 때만 쓴다.
+ * 다른 호스트나 http 주소로 로그인 토큰이 나가지 않게 그 밖에는 null을 돌려준다.
+ */
+export function authorizedImageUrl(path: string): string | null {
+  try {
+    const url = new URL(path, `${API_URL}/`);
+    return url.origin === new URL(API_URL).origin ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
+/** 서버 오류(401 등) 때문에 다운로드가 거절됐는지. 메시지에 상태 코드가 들어 있다. */
+function isUnauthorized(error: unknown): boolean {
+  return error instanceof Error && /\b401\b/.test(error.message);
 }
 
 export function removeFile(file: File) {
@@ -41,7 +55,7 @@ async function ensurePng(file: File) {
  * 오류 응답이 이미지로 저장되지 않게 PNG인지 확인하고, 토큰이 만료됐으면 재발급 후 한 번 더 받는다.
  */
 export async function downloadProtectedImage(protectionId: number): Promise<File> {
-  const url = absoluteUrl(protectionDownloadPath(protectionId));
+  const url = `${API_URL}${protectionDownloadPath(protectionId)}`;
   const destination = new File(Paths.cache, `signal-protected-${protectionId}.png`);
   const attempt = async () => {
     const file = await File.downloadFileAsync(url, destination, {
@@ -53,8 +67,10 @@ export async function downloadProtectedImage(protectionId: number): Promise<File
   };
   try {
     return await attempt();
-  } catch {
+  } catch (error) {
     removeFile(destination);
+    // 토큰 만료(401)일 때만 다시 시도한다. PNG가 아니거나 네트워크 오류면 원래 오류를 그대로 올린다.
+    if (!isUnauthorized(error)) throw error;
     // 일반 API를 한 번 부르면 axios가 만료된 토큰을 재발급한다. 실패하면 그 ApiError가 올라간다.
     await getProtection(protectionId);
     try {
