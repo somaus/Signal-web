@@ -7,6 +7,7 @@ export const detectHistoryMessages = defineMessages(
     item: (id: number) => `탐지 #${id}`,
     processing: "탐지 중",
     failed: "탐지 실패",
+    loadFailed: "기록을 불러오지 못했어요.",
   },
   {
     en: {
@@ -15,6 +16,7 @@ export const detectHistoryMessages = defineMessages(
       item: (id: number) => `Detection #${id}`,
       processing: "Checking",
       failed: "Failed",
+      loadFailed: "Couldn't load your history.",
     },
   },
 );

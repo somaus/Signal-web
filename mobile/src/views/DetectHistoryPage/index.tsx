@@ -13,6 +13,7 @@ import { useMessages } from "@/shared/i18n/I18nProvider";
 import { cn } from "@/shared/lib/cn";
 import { useRecentIds } from "@/shared/lib/useRecentIds";
 import Card from "@/shared/ui/Card";
+import ErrorView from "@/shared/ui/ErrorView";
 import Loading from "@/shared/ui/Loading";
 import Screen from "@/shared/ui/Screen";
 import Text from "@/shared/ui/Text";
@@ -34,6 +35,18 @@ export default function DetectHistoryPage() {
   // 다른 계정으로 만든 기록처럼 지금 조회할 수 없는 번호는 목록에서 뺀다.
   const items = queries.flatMap((query) => (query.data ? [query.data] : []));
   const loading = recent.isPending || queries.some((query) => query.isPending);
+  const allFailed = queries.length > 0 && queries.every((query) => query.isError);
+
+  if (allFailed) {
+    return (
+      <Screen edges={["left", "right"]}>
+        <ErrorView
+          message={t.loadFailed}
+          onRetry={() => queries.forEach((query) => query.refetch())}
+        />
+      </Screen>
+    );
+  }
 
   return (
     <Screen scroll edges={["left", "right"]}>
