@@ -10,6 +10,7 @@ export default function AnalyzeLayout() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="[id]" options={{ title: t.result }} />
       <Stack.Screen name="history" options={{ title: t.history }} />
+      <Stack.Screen name="protect/[id]" options={{ title: t.protect }} />
     </Stack>
   );
 }

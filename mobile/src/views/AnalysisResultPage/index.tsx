@@ -180,7 +180,11 @@ function ResultView({ data }: { data: RiskAssessmentResponse }) {
         </Card>
       ) : null}
 
-      <Button title={t.startChat} onPress={() => router.push("/chat")} />
+      <Button
+        title={t.protect}
+        onPress={() => router.push(`/analyze/protect/${data.assessmentId}`)}
+      />
+      <Button title={t.startChat} variant="outline" onPress={() => router.push("/chat")} />
       <Button title={t.again} variant="outline" onPress={() => router.replace("/analyze")} />
     </>
   );
