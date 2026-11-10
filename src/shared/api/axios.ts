@@ -25,9 +25,10 @@ const DEFAULT_TIMEOUT_MS = 10_000;
 /** 사진·영상·증거 파일 업로드(multipart)의 타임아웃. 서버는 영상을 100MB까지 받는다. */
 export const UPLOAD_TIMEOUT_MS = 60_000;
 
+// 기본 타임아웃을 인스턴스에 두지 않는다. 두면 호출부가 직접 정한 값(예: 10초)과 기본값을 구분할 수 없어서,
+// 요청 인터셉터에서 호출부가 정하지 않은 요청(0)에만 일반 10초, 업로드 60초를 채운다.
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  timeout: DEFAULT_TIMEOUT_MS,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -69,9 +70,9 @@ async function reissueAccessToken(): Promise<string | null> {
 }
 
 api.interceptors.request.use((config) => {
-  // 파일 업로드는 10초 안에 끝나지 않을 수 있다. 호출부에서 따로 정하지 않았을 때만 늘린다.
-  if (isUpload(config) && config.timeout === DEFAULT_TIMEOUT_MS) {
-    config.timeout = UPLOAD_TIMEOUT_MS;
+  // 호출부가 timeout을 정하지 않았으면(axios 기본값 0) 요청 종류에 맞춰 채운다. 정했으면 그대로 둔다.
+  if (!config.timeout) {
+    config.timeout = isUpload(config) ? UPLOAD_TIMEOUT_MS : DEFAULT_TIMEOUT_MS;
   }
   if (typeof window !== "undefined") {
     const token = getAccessToken();
