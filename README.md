@@ -72,43 +72,29 @@ Signal은 딥페이크·디지털 성범죄·얼굴 도용 같은 온라인 위�
 
 모바일 앱은 위험도 분석, 탐지, 상담 챗봇, 신고서, 이미지 보호 화면을 같은 흐름으로 제공합니다.
 
-<h3>설계 원칙: AI가 맡는 일과 서버가 정하는 일</h3> <hr>
+<h3>아키텍처</h3> <hr>
 
-피해자를 다루는 서비스라서, **AI가 틀려도 사람이 다치지 않는 곳에만 AI를 씁니다.** 웹과 앱은 화면과 입력만 맡고, 모든 판단은 [Signal-server](https://github.com/somaus/Signal-server)에서 아래 두 영역으로 나뉩니다.
+웹과 앱은 화면과 사용자 입력을 맡고, 분석과 판단은 모두 Signal-server가 처리합니다. 서버는 LLM(Groq)과 전용 추론 서비스를 호출하고, 안전과 정확성이 중요한 부분(위기 감지, 기관 추천, 메타데이터 판독)은 규칙 기반으로 직접 처리합니다.
 
 ```mermaid
-flowchart TB
-    C["웹 · 모바일 앱"] -->|"사진 / 메시지"| S["Signal-server"]
+flowchart LR
+    Web["웹 (Next.js)"] --> Server
+    App["모바일 앱 (Expo)"] --> Server
+    Server["Signal-server<br/>(Spring Boot)"] --> LLM["Groq LLM<br/>(챗봇·비전)"]
+    Server --> Lab["추론 서비스<br/>(detect-lab 등, 선택)"]
+    Server --> DB[("MySQL")]
 
-    subgraph R["서버 규칙 (항상 같은 결과)"]
-        R1["위기 신호 감지 · 위기 응답"]
-        R2["기관·전화번호 안내"]
-        R3["상담 단계 완료 판정"]
-        R4["EXIF 메타데이터 판독"]
-        R5["등급 경계 · 점수 공식"]
-    end
-
-    subgraph A["AI (결과가 달라질 수 있음)"]
-        A1["일반 대화 답변 (LLM)"]
-        A2["이미지 해석 (비전 LLM)"]
-        A3["합성 흔적 탐지 (전용 모델, 선택)"]
-    end
-
-    S --> R
-    S --> A
-    A -.->|"키 없음 · 호출 실패"| F["룰 기반 응답 + 추정치 안내"]
+    classDef client fill:#E1F5EE,stroke:#0F6E56,color:#085041
+    classDef server fill:#EEEDFE,stroke:#534AB7,color:#3C3489
+    classDef ai fill:#FAECE7,stroke:#993C1D,color:#712B13
+    classDef store fill:#F1EFE8,stroke:#5F5E5A,color:#444441
+    class Web,App client
+    class Server server
+    class LLM,Lab ai
+    class DB store
 ```
 
-| 판단 | 누가 정하나 | 이유 |
-| :--- | :--- | :--- |
-| 위기 신호, 위기 응답 | 서버 규칙 | 놓치는 쪽이 더 위험해서 키워드를 넓게 잡고 4개 언어를 모두 검사 |
-| 기관·전화번호 | 서버의 기관 목록 | AI가 번호를 지어내면 피해자가 엉뚱한 곳에 전화하게 됨 |
-| 상담 단계 완료 | 서버 규칙 | AI가 "완료"라고 해도 진행률이 오르지 않게 함 |
-| 위치 정보(EXIF) 노출 | 서버가 직접 판독 | 파일에 적힌 값을 읽는 일이라 추정이 필요 없음 |
-| 점수와 등급 | 서버의 고정 공식 | 같은 사진이면 같은 결과, 점수 근거를 설명 가능 |
-| 일반 대화, 이미지 해석 | AI | 규칙으로 쓸 수 없는 부분만 맡김 |
-
-AI 호출이 막히면(키 없음, 한도, 서버 오류) 서버가 룰 기반 응답으로 대신하고, 화면에 **참고용 추정치**라고 알립니다. 분석을 끝내지 못한 경우는 점수를 지어내지 않고 "분석하지 못함"으로 둡니다.
+API 키가 없거나 호출이 실패하면 서버가 룰 기반 응답으로 대체하고, 이때 화면에 참고용 추정치임을 안내합니다.
 
 <h3>기술 스택</h3> <hr>
 
