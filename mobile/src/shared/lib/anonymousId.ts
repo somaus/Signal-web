@@ -5,6 +5,14 @@ const ANONYMOUS_ID_KEY = "anonymousId";
 
 let pending: Promise<string> | null = null;
 
+export async function getExistingAnonymousId(): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(ANONYMOUS_ID_KEY);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * 비회원 식별자. 처음 한 번 만들어 저장해 두고 계속 쓴다.
  * 동시에 여러 번 불려도 같은 Promise를 돌려줘서 ID가 하나만 만들어진다.

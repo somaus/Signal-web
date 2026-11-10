@@ -1,5 +1,5 @@
 import { api } from "@/shared/api/axios";
-import { guestHeaders } from "@/shared/api/guestHeaders";
+import { loginGuestHeaders } from "@/shared/api/guestHeaders";
 import { defineMessages } from "@/shared/i18n/defineMessages";
 import { translate } from "@/shared/i18n/currentLocale";
 
@@ -72,7 +72,7 @@ export interface UpdateUserRequest {
 
 export async function login(payload: LoginRequest): Promise<TokenResponse> {
   const { data } = await api.post<TokenResponse>("/api/v1/auth/login", payload, {
-    headers: guestHeaders(),
+    headers: loginGuestHeaders(),
   });
   return data;
 }
