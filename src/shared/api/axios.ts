@@ -20,17 +20,26 @@ export class ApiError extends Error {
   }
 }
 
+/** 일반 JSON 요청의 타임아웃. */
+const DEFAULT_TIMEOUT_MS = 10_000;
+/** 사진·영상·증거 파일 업로드(multipart)의 타임아웃. 서버는 영상을 100MB까지 받는다. */
+export const UPLOAD_TIMEOUT_MS = 60_000;
+
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  timeout: 10_000,
+  timeout: DEFAULT_TIMEOUT_MS,
   headers: { "Content-Type": "application/json" },
 });
 
 const reissueClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  timeout: 10_000,
+  timeout: DEFAULT_TIMEOUT_MS,
   headers: { "Content-Type": "application/json" },
 });
+
+function isUpload(config: InternalAxiosRequestConfig | undefined): boolean {
+  return typeof FormData !== "undefined" && config?.data instanceof FormData;
+}
 
 interface RetryableConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -60,6 +69,10 @@ async function reissueAccessToken(): Promise<string | null> {
 }
 
 api.interceptors.request.use((config) => {
+  // 파일 업로드는 10초 안에 끝나지 않을 수 있다. 호출부에서 따로 정하지 않았을 때만 늘린다.
+  if (isUpload(config) && config.timeout === DEFAULT_TIMEOUT_MS) {
+    config.timeout = UPLOAD_TIMEOUT_MS;
+  }
   if (typeof window !== "undefined") {
     const token = getAccessToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -103,7 +116,9 @@ api.interceptors.response.use(
     const fallback = error.response
       ? t.unknown
       : error.code === AxiosError.ECONNABORTED
-        ? t.timeout
+        ? isUpload(original)
+          ? t.uploadTimeout
+          : t.timeout
         : t.network;
     const message = serverMessage ?? (code ? t.codes[code] : undefined) ?? fallback;
     return Promise.reject(new ApiError(message, code));
