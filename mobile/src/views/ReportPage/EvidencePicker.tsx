@@ -75,9 +75,14 @@ export default function EvidencePicker({ evidence, onChange }: EvidencePickerPro
           ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Compatible,
       });
     } catch {
-      // 사진 접근이 막혀 있으면 여기로 온다. 앱을 멈추지 않고 안내만 한다.
-      showPermissionGuide();
-      return { kind: "canceled" };
+      // 최신 iOS·Android의 사진 선택기는 권한 없이 열려서, 오류가 났다고 권한 문제라고 단정할 수 없다.
+      // 실제로 권한이 거부된 경우에만 설정 안내를 띄우고, 그 밖에는 일반 오류로 알린다.
+      const permission = await ImagePicker.getMediaLibraryPermissionsAsync().catch(() => null);
+      if (permission && !permission.granted && !permission.canAskAgain) {
+        showPermissionGuide();
+        return { kind: "canceled" };
+      }
+      return { kind: "error", message: t.evidence.pickFailed };
     }
     if (result.canceled) return { kind: "canceled" };
     const asset = result.assets[0];
