@@ -36,12 +36,14 @@ export interface ReportResponse {
   discoveryRoute?: string;
   damageType?: string;
   description?: string;
+  /** AI가 원문을 요약한 사건 개요. 원문이 짧거나 요약을 만들지 못하면 없다. */
+  summary?: string | null;
   sourceUrls?: string[];
   evidenceIds?: number[];
   targetAgencyType?: string;
   additionalNotes?: string;
+  /** 신고 문서(PDF)를 받는 API 경로. 로그인이 필요해 링크로 열 수 없고 downloadReportDocument로 받는다. */
   documentUrl?: string;
-  documentSimulated?: boolean;
   timeline: ReportTimelineEntry[];
   createdAt: string;
 }
@@ -71,6 +73,13 @@ export async function updateReport(
   payload: UpdateReportRequest,
 ): Promise<ReportResponse> {
   const { data } = await api.patch<ReportResponse>(`/api/v1/reports/${reportId}`, payload);
+  return data;
+}
+
+export async function downloadReportDocument(reportId: number): Promise<Blob> {
+  const { data } = await api.get<Blob>(`/api/v1/reports/${reportId}/document`, {
+    responseType: "blob",
+  });
   return data;
 }
 

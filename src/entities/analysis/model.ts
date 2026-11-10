@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { RiskAssessmentResponse, RiskLevel } from "./api";
+import type { CompletedAssessment, RiskLevel } from "./api";
 import FileText from "@/shared/asset/svg/FileText";
 import Hd from "@/shared/asset/svg/Hd";
 import IdCard from "@/shared/asset/svg/IdCard";
@@ -140,7 +140,7 @@ function resolveFactorIcon(type: string, label: string): ComponentType {
   return matched?.[1] ?? ScanFace;
 }
 
-export function mapAssessment(data: RiskAssessmentResponse, locale: Locale): AnalysisResult {
+export function mapAssessment(data: CompletedAssessment, locale: Locale): AnalysisResult {
   const t = assessmentMessages[locale];
   const labels = factorLabelMessages[locale];
   return {
