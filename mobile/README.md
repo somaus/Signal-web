@@ -24,6 +24,26 @@ npx expo start
 
 `.env`는 커밋하지 않습니다. 값을 바꾼 뒤에는 `npx expo start --clear`로 다시 켭니다.
 
+## 시연 실행 방식
+
+시연은 **Expo Go**로 실행하는 것을 기본으로 합니다. 빌드가 필요 없고, 코드를 고치면 바로 반영됩니다. 시연 기기에서 Expo Go를 쓸 수 없을 때만 아래 APK를 대신 씁니다.
+
+- **Expo Go (기본)**: 일반적인 시연. 휴대폰에 Expo Go를 설치하고 PC와 같은 와이파이에 연결합니다.
+- **EAS preview APK**: Expo Go를 쓸 수 없는 Android 기기용. Expo 계정과 `eas-cli`가 필요하고 빌드에 몇 분 걸립니다.
+
+APK는 `eas.json`의 `preview` 프로필로 만듭니다. 배포 서버(https)를 바라보도록 환경변수가 들어 있습니다. 처음 한 번은 `eas init`으로 프로젝트를 Expo 계정에 연결해야 하며, 이 과정에서 `app.json`에 `extra.eas.projectId`가 추가됩니다.
+
+```bash
+npm install -g eas-cli
+eas login
+eas init                                          # 처음 한 번
+eas build --profile preview --platform android    # 끝나면 APK 다운로드 링크가 나옵니다
+```
+
+iOS는 Apple 개발자 계정이 있어야 설치용 빌드를 만들 수 있어서 시연에서는 Expo Go만 씁니다.
+
+시연 전에 챙길 것, 장면 순서, 대체 자료는 [`docs/demo-checklist.md`](docs/demo-checklist.md)에 정리했습니다.
+
 ## 폴더 구조
 
 웹과 같은 Feature-Sliced Design 구조입니다. import 방향은 `app → views → widgets → features → entities → shared` 한쪽으로만 둡니다.
@@ -38,9 +58,18 @@ src/
     api/      axios 클라이언트, 에러 문구
     config/   환경변수, QueryClient, 색상 상수
     i18n/     ko/en 다국어
-    lib/      토큰 저장, 비회원 ID 등
+    lib/      토큰 저장, 비회원 ID, 사진 선택, 폴링 타임아웃 등
     ui/       Screen, Button, Card, Badge, Loading, ErrorView, Input, Text
 ```
+
+## 위험도 분석 화면
+
+사진 위험도 분석(`분석` 탭)은 사진을 고르면(`widgets/ImagePickerCard`, 갤러리·카메라) 서버에 접수하고, 접수된 번호의 결과 화면(`/analyze/[id]`)이 진행 중인 동안 1.5초마다 조회합니다.
+
+- 결과 화면은 번호로 조회하므로 화면을 벗어났다 돌아와도 이어집니다. 이 기기에서 만든 번호는 `AsyncStorage`에 최근 20개를 보관하고(`shared/lib/recentIds.ts`), 진행 중인 건이 있으면 첫 화면에 "이어서 보기"가 나옵니다.
+- 분석 기록은 로그인하면 서버 목록(`GET /api/v1/risk-assessments`), 비회원이면 이 기기의 최근 번호로 보여줍니다.
+- 사진은 JPG, PNG만 올립니다(HEIC는 선택기가 JPEG로 바꿉니다). 10MB 이하, 6,400만 화소 이하입니다.
+- 업로드 요청만 타임아웃이 60초입니다(`shared/api/imageForm.ts`). 나머지 요청은 10초입니다.
 
 ## 디자인 토큰
 
