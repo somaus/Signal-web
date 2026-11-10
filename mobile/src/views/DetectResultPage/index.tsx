@@ -95,9 +95,8 @@ function FailureView({
 }) {
   const t = useMessages(detectResultMessages);
   const messages = useMessages(detectionMessages);
-  const failure = data.failureReason
-    ? messages.failure[data.failureReason]
-    : messages.unknownFailure;
+  const failure =
+    (data.failureReason && messages.failure[data.failureReason]) || messages.unknownFailure;
   return (
     <Card className="items-center gap-3 py-8">
       <Text weight="bold" className="text-center text-body-1">
