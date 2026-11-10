@@ -15,8 +15,8 @@ import RootError from "@/widgets/RootError";
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 /** 화면을 그리다 예외가 나면 앱이 닫히거나 빨간 오류 화면이 뜨는 대신 다시 시도 화면을 보여준다. */
-export function ErrorBoundary({ retry }: { error: Error; retry: () => Promise<void> }) {
-  return <RootError onRetry={retry} />;
+export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Promise<void> }) {
+  return <RootError error={error} onRetry={retry} />;
 }
 
 /** 세션이 만료돼 로그인이 풀리면 로그인 화면으로 보낸다. 직접 로그아웃한 경우는 이동하지 않는다. */
