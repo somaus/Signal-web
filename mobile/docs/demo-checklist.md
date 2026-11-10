@@ -10,11 +10,15 @@
 - [x] Expo Go를 쓸 수 없을 때를 위한 EAS preview APK 빌드 설정
 - [x] 실행 방식 확정(Expo Go 기본, APK 대체): [README](../README.md#시연-실행-방식)
 
+## 시연 2~3일 전
+
+- [ ] Expo Go가 안 되는 기기가 하나라도 있으면 APK를 미리 만든다. [README](../README.md#시연-실행-방식)의 `eas login`, `eas init`, `eas build` 순서로 진행한다. 무료 플랜은 빌드 대기열이 길 수 있어서 전날 시작하면 시연 당일에 받지 못할 수 있다
+- [ ] 받은 APK를 시연 기기에 설치해 로그인까지 확인하고, 더보기 화면의 서버 주소가 배포 서버(`https://signal.https.gsmsv.site`)인지 확인한다
+
 ## 시연 전날
 
 - [ ] 배포 서버(`https://signal.https.gsmsv.site`)가 살아 있는지 확인: 휴대폰 브라우저로 접속해 응답이 오는지 본다
 - [ ] 시연용 휴대폰에 Expo Go 설치, `npx expo start`로 QR 실행이 되는지 확인
-- [ ] 시연 기기가 Android이고 Expo Go가 안 되면 `eas build --profile preview --platform android`로 APK를 미리 만들어 설치
 - [ ] 시연용 계정으로 로그인이 되는지 확인(비밀번호는 문서에 적지 않는다)
 - [ ] 샘플 이미지를 휴대폰 앨범에 넣어 둔다: 위험 메시지 캡처 1장, 딥페이크 의심 얼굴 사진 1장, 얼굴이 없는 사진 1장(실패 사례)
 - [ ] 시연 기기 언어를 한국어로 맞춘다
