@@ -84,7 +84,7 @@ flowchart LR
     Server --> Lab["추론 서비스 (선택)<br/>detect-lab<br/>risk-lab<br/>protection-lab"]
     Server --> DB[("MySQL")]
 
-    classDef navy fill:#1E3A8A,stroke:#172554,color:#FFFFFF
+    classDef navy fill:#1E3A8A,color:#FFFFFF
     class Web,App,Server,LLM,Lab,DB navy
 ```
 
