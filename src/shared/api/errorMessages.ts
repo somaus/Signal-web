@@ -33,6 +33,8 @@ interface ErrorText {
   codes: Record<ApiErrorCode, string>;
   timeout: string;
   network: string;
+  /** 파일 업로드가 타임아웃으로 끊겼을 때. */
+  uploadTimeout: string;
   unknown: string;
 }
 
@@ -72,6 +74,8 @@ export const errorMessages = defineMessages<ErrorText>(
     },
     timeout: "응답이 늦어지고 있습니다. 잠시 후 다시 시도해 주세요.",
     network: "네트워크 연결을 확인해 주세요.",
+    uploadTimeout:
+      "파일을 올리는 데 시간이 너무 오래 걸려 중단됐습니다. 네트워크 상태를 확인하거나 더 작은 파일로 다시 시도해 주세요.",
     unknown: "알 수 없는 오류가 발생했습니다.",
   },
   {
@@ -111,6 +115,8 @@ export const errorMessages = defineMessages<ErrorText>(
       },
       timeout: "The response is taking too long. Please try again shortly.",
       network: "Please check your network connection.",
+      uploadTimeout:
+        "The upload took too long and was stopped. Check your connection or try a smaller file.",
       unknown: "An unknown error occurred.",
     },
     ja: {
@@ -152,6 +158,8 @@ export const errorMessages = defineMessages<ErrorText>(
       },
       timeout: "応答に時間がかかっています。しばらくしてからもう一度お試しください。",
       network: "ネットワーク接続をご確認ください。",
+      uploadTimeout:
+        "ファイルのアップロードに時間がかかりすぎたため中断しました。通信状況を確認するか、小さいファイルでもう一度お試しください。",
       unknown: "不明なエラーが発生しました。",
     },
     zh: {
@@ -186,6 +194,7 @@ export const errorMessages = defineMessages<ErrorText>(
       },
       timeout: "响应时间过长，请稍后重试。",
       network: "请检查网络连接。",
+      uploadTimeout: "文件上传时间过长，已中断。请检查网络或换用较小的文件重试。",
       unknown: "发生未知错误。",
     },
   },
