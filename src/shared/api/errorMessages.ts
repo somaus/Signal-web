@@ -1,10 +1,14 @@
 import { defineMessages } from "@/shared/i18n/defineMessages";
 
+// 서버 에러 코드 목록. somaus/Signal-server의 global/exception/ErrorCode.java와 같아야 하고,
+// 앱(mobile/src/shared/api/errorMessages.ts)도 같은 목록을 쓴다. 서버에 코드가 생기면 세 곳을 같이 고친다.
 export type ApiErrorCode =
   | "INVALID_INPUT"
   | "UNAUTHORIZED"
   | "FORBIDDEN"
   | "NOT_FOUND"
+  | "UNSUPPORTED_CONTENT_TYPE"
+  | "METHOD_NOT_ALLOWED"
   | "CONFLICT"
   | "FILE_TOO_LARGE"
   | "UNSUPPORTED_MEDIA_TYPE"
@@ -20,19 +24,23 @@ export type ApiErrorCode =
   | "VERIFICATION_TOO_FREQUENT"
   | "FACE_NOT_DETECTED"
   | "ANALYSIS_UNAVAILABLE"
+  | "ANALYSIS_TIMEOUT"
   | "ANONYMOUS_ID_REQUIRED"
   | "ANONYMOUS_DETECTION_LIMIT_EXCEEDED"
   | "ANONYMOUS_RISK_ASSESSMENT_LIMIT_EXCEEDED"
   | "ANONYMOUS_CHAT_LIMIT_EXCEEDED"
   | "PROTECTION_NOT_READY"
+  | "WEB_SEARCH_DISABLED"
+  | "MONITORING_LIMIT_EXCEEDED"
   | "REQUIRED_FIELD_MISSING"
-  | "REPORT_ALREADY_FINALIZED"
-  | "WEB_SEARCH_DISABLED";
+  | "REPORT_ALREADY_FINALIZED";
 
 interface ErrorText {
   codes: Record<ApiErrorCode, string>;
   timeout: string;
   network: string;
+  /** 파일 업로드가 타임아웃으로 끊겼을 때. */
+  uploadTimeout: string;
   unknown: string;
 }
 
@@ -69,9 +77,16 @@ export const errorMessages = defineMessages<ErrorText>(
       REQUIRED_FIELD_MISSING: "필수 항목을 입력해 주세요.",
       REPORT_ALREADY_FINALIZED: "이미 완료된 신고 문서는 수정할 수 없습니다.",
       WEB_SEARCH_DISABLED: "웹 검색은 아직 준비 중인 기능입니다.",
+      ANALYSIS_TIMEOUT: "이미지 분석 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.",
+      MONITORING_LIMIT_EXCEEDED:
+        "등록할 수 있는 모니터링 수를 넘었습니다. 기존 모니터링을 삭제한 뒤 다시 시도해 주세요.",
+      UNSUPPORTED_CONTENT_TYPE: "지원하지 않는 요청 형식입니다.",
+      METHOD_NOT_ALLOWED: "지원하지 않는 요청 방식입니다.",
     },
     timeout: "응답이 늦어지고 있습니다. 잠시 후 다시 시도해 주세요.",
     network: "네트워크 연결을 확인해 주세요.",
+    uploadTimeout:
+      "파일을 올리는 요청의 응답 시간이 초과됐습니다. 업로드가 이미 처리됐을 수 있으니 기록을 확인한 뒤 다시 시도해 주세요.",
     unknown: "알 수 없는 오류가 발생했습니다.",
   },
   {
@@ -108,9 +123,16 @@ export const errorMessages = defineMessages<ErrorText>(
         REQUIRED_FIELD_MISSING: "Please fill in the required fields.",
         REPORT_ALREADY_FINALIZED: "A finalized report document can't be edited.",
         WEB_SEARCH_DISABLED: "Web search is coming soon.",
+        ANALYSIS_TIMEOUT: "The image analysis timed out. Please try again shortly.",
+        MONITORING_LIMIT_EXCEEDED:
+          "You've reached the monitoring limit. Delete an existing monitor and try again.",
+        UNSUPPORTED_CONTENT_TYPE: "This request format isn't supported.",
+        METHOD_NOT_ALLOWED: "This request method isn't supported.",
       },
       timeout: "The response is taking too long. Please try again shortly.",
       network: "Please check your network connection.",
+      uploadTimeout:
+        "The upload request timed out. It may have already been processed, so check your history before trying again.",
       unknown: "An unknown error occurred.",
     },
     ja: {
@@ -149,9 +171,17 @@ export const errorMessages = defineMessages<ErrorText>(
         REQUIRED_FIELD_MISSING: "必須項目を入力してください。",
         REPORT_ALREADY_FINALIZED: "完了した通報書類は編集できません。",
         WEB_SEARCH_DISABLED: "Web検索は準備中の機能です。",
+        ANALYSIS_TIMEOUT:
+          "画像分析がタイムアウトしました。しばらくしてからもう一度お試しください。",
+        MONITORING_LIMIT_EXCEEDED:
+          "登録できるモニタリング数の上限を超えました。既存のモニタリングを削除してからもう一度お試しください。",
+        UNSUPPORTED_CONTENT_TYPE: "対応していないリクエスト形式です。",
+        METHOD_NOT_ALLOWED: "対応していないリクエスト方式です。",
       },
       timeout: "応答に時間がかかっています。しばらくしてからもう一度お試しください。",
       network: "ネットワーク接続をご確認ください。",
+      uploadTimeout:
+        "ファイルアップロードの応答がタイムアウトしました。すでに処理されている可能性があるため、履歴を確認してからもう一度お試しください。",
       unknown: "不明なエラーが発生しました。",
     },
     zh: {
@@ -183,9 +213,14 @@ export const errorMessages = defineMessages<ErrorText>(
         REQUIRED_FIELD_MISSING: "请填写必填项。",
         REPORT_ALREADY_FINALIZED: "已完成的举报文件无法修改。",
         WEB_SEARCH_DISABLED: "网络搜索功能即将推出。",
+        ANALYSIS_TIMEOUT: "图片分析超时，请稍后重试。",
+        MONITORING_LIMIT_EXCEEDED: "可登记的监控数量已达上限，请删除已有监控后重试。",
+        UNSUPPORTED_CONTENT_TYPE: "不支持该请求格式。",
+        METHOD_NOT_ALLOWED: "不支持该请求方式。",
       },
       timeout: "响应时间过长，请稍后重试。",
       network: "请检查网络连接。",
+      uploadTimeout: "文件上传请求响应超时。上传可能已完成，请先查看记录再重试。",
       unknown: "发生未知错误。",
     },
   },

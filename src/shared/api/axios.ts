@@ -20,17 +20,32 @@ export class ApiError extends Error {
   }
 }
 
+/** 일반 JSON 요청의 타임아웃. */
+const DEFAULT_TIMEOUT_MS = 10_000;
+/** 사진·영상·증거 파일 업로드(multipart)의 타임아웃. 서버는 영상을 100MB까지 받는다. */
+export const UPLOAD_TIMEOUT_MS = 60_000;
+
+/**
+ * "호출부가 timeout을 정하지 않음" 표시. axios는 기본값도 0(제한 없음)이라 호출부가 직접 준 0·10초와
+ * 구분할 수 없어서, 인스턴스 기본값을 이 값으로 두고 요청 인터셉터에서 이 값일 때만 채운다.
+ */
+const UNSET_TIMEOUT = -1;
+
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  timeout: 10_000,
+  timeout: UNSET_TIMEOUT,
   headers: { "Content-Type": "application/json" },
 });
 
 const reissueClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  timeout: 10_000,
+  timeout: DEFAULT_TIMEOUT_MS,
   headers: { "Content-Type": "application/json" },
 });
+
+function isUpload(config: InternalAxiosRequestConfig | undefined): boolean {
+  return typeof FormData !== "undefined" && config?.data instanceof FormData;
+}
 
 interface RetryableConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -60,6 +75,10 @@ async function reissueAccessToken(): Promise<string | null> {
 }
 
 api.interceptors.request.use((config) => {
+  // 호출부가 timeout을 정하지 않았으면 요청 종류에 맞춰 채운다. 0(제한 없음)을 포함해 직접 정한 값은 그대로 둔다.
+  if (config.timeout === UNSET_TIMEOUT) {
+    config.timeout = isUpload(config) ? UPLOAD_TIMEOUT_MS : DEFAULT_TIMEOUT_MS;
+  }
   if (typeof window !== "undefined") {
     const token = getAccessToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -103,7 +122,9 @@ api.interceptors.response.use(
     const fallback = error.response
       ? t.unknown
       : error.code === AxiosError.ECONNABORTED
-        ? t.timeout
+        ? isUpload(original)
+          ? t.uploadTimeout
+          : t.timeout
         : t.network;
     const message = serverMessage ?? (code ? t.codes[code] : undefined) ?? fallback;
     return Promise.reject(new ApiError(message, code));
