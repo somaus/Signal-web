@@ -60,6 +60,7 @@ export const reportMessages = defineMessages(
       unsupported: "JPG, PNG, PDF 파일만 첨부할 수 있어요.",
       tooLarge: "20MB 이하 파일만 첨부할 수 있어요.",
       uploadFailed: "증거 자료를 올리지 못했어요.",
+      pickFailed: "사진을 불러오지 못했어요. 다시 시도하거나 PDF 파일로 첨부해 주세요.",
       permissionTitle: "사진 접근 권한이 필요해요",
       permissionDescription:
         "설정에서 Signal의 사진 접근을 허용하면 증거 사진을 고를 수 있어요. 대신 PDF 파일로 첨부해도 괜찮아요.",
@@ -153,6 +154,7 @@ export const reportMessages = defineMessages(
         unsupported: "Only JPG, PNG and PDF files can be attached.",
         tooLarge: "Only files up to 20MB can be attached.",
         uploadFailed: "Couldn't upload the evidence.",
+        pickFailed: "Couldn't load the photo. Try again or attach a PDF instead.",
         permissionTitle: "Photo access needed",
         permissionDescription:
           "Allow Signal to access your photos in Settings to choose a photo. You can attach a PDF instead.",
