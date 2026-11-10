@@ -69,10 +69,17 @@ async function downloadPdf(reportId: number): Promise<File> {
   try {
     return await attempt();
   } catch {
+    // Android는 받는 도중 실패하면 일부만 쓰인 파일이 남을 수 있어서 먼저 지운다.
+    removeFile(destination);
     // 액세스 토큰이 만료됐을 수 있다. 일반 API를 한 번 부르면 axios가 토큰을 재발급한다.
     // 이 호출이 실패하면 그 ApiError(사용자에게 보여줄 문구)가 그대로 올라간다.
     await getReport(reportId);
-    return attempt();
+    try {
+      return await attempt();
+    } catch (error) {
+      removeFile(destination);
+      throw error;
+    }
   }
 }
 
