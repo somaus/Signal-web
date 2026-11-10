@@ -14,11 +14,41 @@ export class CannotOpenDocumentError extends Error {
   }
 }
 
+/** 받은 파일이 PDF가 아니다(서버 오류 응답이 파일로 저장된 경우 등). */
+class NotPdfError extends Error {
+  constructor() {
+    super("downloaded file is not a pdf");
+    this.name = "NotPdfError";
+  }
+}
+
+// PDF 파일은 항상 "%PDF"로 시작한다.
+const PDF_SIGNATURE = [0x25, 0x50, 0x44, 0x46];
+
 async function requestHeaders(): Promise<Record<string, string>> {
   const token = await getAccessToken();
   const headers: Record<string, string> = { "Accept-Language": htmlLang[currentLocale()] };
   if (token) headers.Authorization = `Bearer ${token}`;
   return headers;
+}
+
+/** 신고 문서는 피해 사실이 담긴 민감한 파일이라 쓰고 나면 바로 지운다. */
+function removeFile(file: File) {
+  try {
+    if (file.exists) file.delete();
+  } catch {
+    // 지우지 못해도 캐시라 OS가 나중에 정리한다. 사용자 흐름은 막지 않는다.
+  }
+}
+
+/** 오류 응답(JSON 등)이 .pdf로 저장돼 깨진 문서를 여는 일이 없게 앞 4바이트를 확인한다. */
+async function ensurePdf(file: File) {
+  const bytes = await file.bytes();
+  const isPdf = PDF_SIGNATURE.every((byte, index) => bytes[index] === byte);
+  if (!isPdf) {
+    removeFile(file);
+    throw new NotPdfError();
+  }
 }
 
 /**
@@ -28,8 +58,14 @@ async function requestHeaders(): Promise<Record<string, string>> {
 async function downloadPdf(reportId: number): Promise<File> {
   const url = `${API_URL}${reportDocumentPath(reportId)}`;
   const destination = new File(Paths.cache, `signal-report-${reportId}.pdf`);
-  const attempt = async () =>
-    File.downloadFileAsync(url, destination, { headers: await requestHeaders(), idempotent: true });
+  const attempt = async () => {
+    const file = await File.downloadFileAsync(url, destination, {
+      headers: await requestHeaders(),
+      idempotent: true,
+    });
+    await ensurePdf(file);
+    return file;
+  };
   try {
     return await attempt();
   } catch {
