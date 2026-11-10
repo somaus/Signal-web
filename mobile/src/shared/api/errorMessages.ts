@@ -1,11 +1,14 @@
 import { defineMessages } from "@/shared/i18n/defineMessages";
 
-// 서버 에러 코드. 웹(Signal-web/src/shared/api/errorMessages.ts)과 같은 목록이다.
+// 서버 에러 코드 목록. somaus/Signal-server의 global/exception/ErrorCode.java와 같아야 하고,
+// 웹(Signal-web/src/shared/api/errorMessages.ts)도 같은 목록을 쓴다. 서버에 코드가 생기면 세 곳을 같이 고친다.
 export type ApiErrorCode =
   | "INVALID_INPUT"
   | "UNAUTHORIZED"
   | "FORBIDDEN"
   | "NOT_FOUND"
+  | "UNSUPPORTED_CONTENT_TYPE"
+  | "METHOD_NOT_ALLOWED"
   | "CONFLICT"
   | "FILE_TOO_LARGE"
   | "UNSUPPORTED_MEDIA_TYPE"
@@ -21,14 +24,16 @@ export type ApiErrorCode =
   | "VERIFICATION_TOO_FREQUENT"
   | "FACE_NOT_DETECTED"
   | "ANALYSIS_UNAVAILABLE"
+  | "ANALYSIS_TIMEOUT"
   | "ANONYMOUS_ID_REQUIRED"
   | "ANONYMOUS_DETECTION_LIMIT_EXCEEDED"
   | "ANONYMOUS_RISK_ASSESSMENT_LIMIT_EXCEEDED"
   | "ANONYMOUS_CHAT_LIMIT_EXCEEDED"
   | "PROTECTION_NOT_READY"
+  | "WEB_SEARCH_DISABLED"
+  | "MONITORING_LIMIT_EXCEEDED"
   | "REQUIRED_FIELD_MISSING"
-  | "REPORT_ALREADY_FINALIZED"
-  | "WEB_SEARCH_DISABLED";
+  | "REPORT_ALREADY_FINALIZED";
 
 interface ErrorText {
   codes: Record<ApiErrorCode, string>;
@@ -72,6 +77,11 @@ export const errorMessages = defineMessages<ErrorText>(
       REQUIRED_FIELD_MISSING: "필수 항목을 입력해 주세요.",
       REPORT_ALREADY_FINALIZED: "이미 완료된 신고 문서는 수정할 수 없습니다.",
       WEB_SEARCH_DISABLED: "웹 검색은 아직 준비 중인 기능입니다.",
+      ANALYSIS_TIMEOUT: "이미지 분석 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요.",
+      MONITORING_LIMIT_EXCEEDED:
+        "등록할 수 있는 모니터링 수를 넘었습니다. 기존 모니터링을 삭제한 뒤 다시 시도해 주세요.",
+      UNSUPPORTED_CONTENT_TYPE: "지원하지 않는 요청 형식입니다.",
+      METHOD_NOT_ALLOWED: "지원하지 않는 요청 방식입니다.",
     },
     timeout: "응답이 늦어지고 있습니다. 잠시 후 다시 시도해 주세요.",
     network: "네트워크 연결을 확인해 주세요.",
@@ -113,6 +123,11 @@ export const errorMessages = defineMessages<ErrorText>(
         REQUIRED_FIELD_MISSING: "Please fill in the required fields.",
         REPORT_ALREADY_FINALIZED: "A finalized report document can't be edited.",
         WEB_SEARCH_DISABLED: "Web search is coming soon.",
+        ANALYSIS_TIMEOUT: "The image analysis timed out. Please try again shortly.",
+        MONITORING_LIMIT_EXCEEDED:
+          "You've reached the monitoring limit. Delete an existing monitor and try again.",
+        UNSUPPORTED_CONTENT_TYPE: "This request format isn't supported.",
+        METHOD_NOT_ALLOWED: "This request method isn't supported.",
       },
       timeout: "The response is taking too long. Please try again shortly.",
       network: "Please check your network connection.",
