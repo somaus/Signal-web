@@ -90,16 +90,24 @@ export async function downloadAndOpenReportDocument(
 ): Promise<void> {
   const file = await downloadPdf(reportId);
   if (await Sharing.isAvailableAsync()) {
-    await Sharing.shareAsync(file.uri, {
-      mimeType: "application/pdf",
-      UTI: "com.adobe.pdf",
-      dialogTitle,
-    });
+    try {
+      // 공유 시트가 닫힌 뒤에 끝나므로, 다른 앱이 파일을 다 읽은 다음에 지운다.
+      await Sharing.shareAsync(file.uri, {
+        mimeType: "application/pdf",
+        UTI: "com.adobe.pdf",
+        dialogTitle,
+      });
+    } finally {
+      removeFile(file);
+    }
     return;
   }
+  // 미리보기는 화면을 띄우는 순간 끝나서(닫힐 때가 아님) 이때 지우면 뷰어가 파일을 못 읽는다.
+  // 이 경우만 캐시에 두고, 다음에 같은 문서를 받을 때 덮어쓴다.
   if (await file.canPreview()) {
     await file.preview();
     return;
   }
+  removeFile(file);
   throw new CannotOpenDocumentError();
 }
