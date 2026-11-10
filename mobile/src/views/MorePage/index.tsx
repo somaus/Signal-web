@@ -39,7 +39,7 @@ export default function MorePage() {
                 ? `${profile.data.name} (${profile.data.email})`
                 : profile.isError
                   ? t.profileError
-                  : ""}
+                  : t.profileLoading}
             </Text>
             <Button title={t.logout} variant="outline" onPress={logout} />
           </>

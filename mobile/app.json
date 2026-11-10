@@ -8,11 +8,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "kr.somaus.signal"
@@ -20,16 +15,23 @@
     "android": {
       "package": "kr.somaus.signal",
       "adaptiveIcon": {
-        "backgroundColor": "#edf3f8",
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#202e64"
       },
       "predictiveBackGestureEnabled": false
     },
     "plugins": [
       "expo-router",
       "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
       "expo-font",
       "expo-localization",
       [
@@ -39,8 +41,7 @@
           "cameraPermission": "분석할 사진을 찍기 위해 카메라를 사용해요.",
           "microphonePermission": false
         }
-      ],
-      "./plugins/withOptionalCamera"
+      ]
     ],
     "extra": {
       "router": {}
