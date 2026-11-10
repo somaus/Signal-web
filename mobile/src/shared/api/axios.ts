@@ -31,9 +31,13 @@ const clientConfig = {
   headers: { "Content-Type": "application/json" },
 };
 
-// 기본 타임아웃을 인스턴스에 두지 않는다. 두면 호출부가 직접 정한 값(예: 10초)과 기본값을 구분할 수 없어서,
-// 요청 인터셉터에서 호출부가 정하지 않은 요청(0)에만 일반 10초, 업로드 60초를 채운다.
-export const api = axios.create(clientConfig);
+/**
+ * "호출부가 timeout을 정하지 않음" 표시. axios는 기본값도 0(제한 없음)이라 호출부가 직접 준 0·10초와
+ * 구분할 수 없어서, 인스턴스 기본값을 이 값으로 두고 요청 인터셉터에서 이 값일 때만 채운다.
+ */
+const UNSET_TIMEOUT = -1;
+
+export const api = axios.create({ ...clientConfig, timeout: UNSET_TIMEOUT });
 
 const reissueClient = axios.create({ ...clientConfig, timeout: DEFAULT_TIMEOUT_MS });
 
@@ -76,8 +80,8 @@ function isRefreshTokenRejected(error: unknown): boolean {
 }
 
 api.interceptors.request.use(async (config) => {
-  // 호출부가 timeout을 정하지 않았으면(axios 기본값 0) 요청 종류에 맞춰 채운다. 정했으면 그대로 둔다.
-  if (!config.timeout) {
+  // 호출부가 timeout을 정하지 않았으면 요청 종류에 맞춰 채운다. 0(제한 없음)을 포함해 직접 정한 값은 그대로 둔다.
+  if (config.timeout === UNSET_TIMEOUT) {
     config.timeout = isUpload(config) ? UPLOAD_TIMEOUT_MS : DEFAULT_TIMEOUT_MS;
   }
   const token = await getAccessToken();
