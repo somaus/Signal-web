@@ -81,17 +81,11 @@ flowchart LR
     Web["웹 (Next.js)"] --> Server
     App["모바일 앱 (Expo)"] --> Server
     Server["Signal-server<br/>(Spring Boot)"] --> LLM["Groq LLM<br/>(챗봇·비전)"]
-    Server --> Lab["추론 서비스<br/>(detect-lab 등, 선택)"]
+    Server --> Lab["추론 서비스 (선택)<br/>detect-lab<br/>risk-lab<br/>protection-lab"]
     Server --> DB[("MySQL")]
 
-    classDef client fill:#E1F5EE,stroke:#0F6E56,color:#085041
-    classDef server fill:#EEEDFE,stroke:#534AB7,color:#3C3489
-    classDef ai fill:#FAECE7,stroke:#993C1D,color:#712B13
-    classDef store fill:#F1EFE8,stroke:#5F5E5A,color:#444441
-    class Web,App client
-    class Server server
-    class LLM,Lab ai
-    class DB store
+    classDef navy fill:#1E3A8A,stroke:#172554,color:#FFFFFF
+    class Web,App,Server,LLM,Lab,DB navy
 ```
 
 API 키가 없거나 호출이 실패하면 서버가 룰 기반 응답으로 대체하고, 이때 화면에 참고용 추정치임을 안내합니다.
