@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, View } from "react-native";
+import { Image, Linking, View } from "react-native";
 import { useMessages } from "@/shared/i18n/I18nProvider";
 import { pickFromLibrary, takePhoto } from "@/shared/lib/pickImage";
 import type { PickedImage, PickResult } from "@/shared/lib/pickImage";
@@ -27,16 +27,20 @@ export default function ImagePickerCard({
 }: ImagePickerCardProps) {
   const t = useMessages(imagePickerMessages);
   const [notice, setNotice] = useState<string | null>(null);
+  const [cameraDenied, setCameraDenied] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function run(pick: () => Promise<PickResult>) {
     if (busy) return;
     setBusy(true);
     setNotice(null);
+    setCameraDenied(false);
     try {
       const result = await pick();
-      if (result.status === "denied") setNotice(t.cameraDenied);
-      else if (result.status === "unsupported") setNotice(t.unsupported);
+      if (result.status === "denied") {
+        setNotice(t.cameraDenied);
+        setCameraDenied(true);
+      } else if (result.status === "unsupported") setNotice(t.unsupported);
       else if (result.status === "picked") {
         const { fileSize, width, height } = result.image;
         if ((fileSize !== null && fileSize > maxBytes) || width * height > MAX_PIXELS) {
@@ -69,6 +73,13 @@ export default function ImagePickerCard({
         </View>
       )}
       {notice ? <Text className="text-small text-red-500">{notice}</Text> : null}
+      {cameraDenied ? (
+        <Button
+          title={t.openSettings}
+          variant="outline"
+          onPress={() => void Linking.openSettings()}
+        />
+      ) : null}
       <View className="gap-2">
         <Button
           title={image ? t.change : t.pickGallery}

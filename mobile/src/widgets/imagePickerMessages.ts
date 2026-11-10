@@ -9,6 +9,7 @@ export const imagePickerMessages = defineMessages(
     takePhoto: "카메라로 사진 촬영",
     fileTypes: "JPG, PNG 사진을 올릴 수 있어요.",
     cameraDenied: "카메라 권한이 없어요. 설정에서 카메라 접근을 허용해 주세요.",
+    openSettings: "설정 열기",
     unsupported: "JPG, PNG 형식의 사진만 올릴 수 있어요.",
     failed: "사진을 불러오지 못했어요. 다시 시도해 주세요.",
     tooLarge: (mb: number) =>
@@ -23,6 +24,7 @@ export const imagePickerMessages = defineMessages(
       takePhoto: "Take a photo",
       fileTypes: "JPG and PNG photos are supported.",
       cameraDenied: "Camera access is off. Allow camera access in Settings.",
+      openSettings: "Open Settings",
       unsupported: "Only JPG and PNG photos can be uploaded.",
       failed: "Couldn't load the photo. Please try again.",
       tooLarge: (mb: number) =>
