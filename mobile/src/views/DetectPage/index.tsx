@@ -16,8 +16,8 @@ import Text from "@/shared/ui/Text";
 import ImagePickerCard from "@/widgets/ImagePickerCard";
 import { detectMessages } from "./messages";
 
-// 서버 한도(100MB)와 같다. 영상은 아직 지원하지 않아 사진만 고르게 한다.
-const MAX_IMAGE_BYTES = 100 * 1024 * 1024;
+// 서버 한도는 영상 기준 100MB지만, 사진만 받는 지금은 업로드 타임아웃(60초) 안에 끝나는 크기로 둔다.
+const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
 function needsLogin(error: unknown): boolean {
   return (
