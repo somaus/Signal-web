@@ -1,0 +1,111 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { View } from "react-native";
+import { createDeepfakeDetection, getDeepfakeDetection } from "@/entities/detection/api";
+import { RECENT_DETECTIONS_KEY } from "@/entities/detection/model";
+import { ApiError } from "@/shared/api/axios";
+import { useMessages } from "@/shared/i18n/I18nProvider";
+import type { PickedImage } from "@/shared/lib/pickImage";
+import { pushRecentId } from "@/shared/lib/recentIds";
+import { recentIdsKey, useRecentIds } from "@/shared/lib/useRecentIds";
+import Button from "@/shared/ui/Button";
+import Card from "@/shared/ui/Card";
+import Screen from "@/shared/ui/Screen";
+import Text from "@/shared/ui/Text";
+import ImagePickerCard from "@/widgets/ImagePickerCard";
+import { detectMessages } from "./messages";
+
+// 서버 한도는 영상 기준 100MB지만, 사진만 받는 지금은 업로드 타임아웃(60초) 안에 끝나는 크기로 둔다.
+const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
+
+function needsLogin(error: unknown): boolean {
+  return (
+    error instanceof ApiError &&
+    (error.code === "UNAUTHORIZED" ||
+      error.code === "ANONYMOUS_ID_REQUIRED" ||
+      error.code === "ANONYMOUS_DETECTION_LIMIT_EXCEEDED")
+  );
+}
+
+export default function DetectPage() {
+  const t = useMessages(detectMessages);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [image, setImage] = useState<PickedImage | null>(null);
+
+  const recent = useRecentIds(RECENT_DETECTIONS_KEY);
+  const lastId = recent.data?.[0];
+  const last = useQuery({
+    queryKey: ["deepfakeDetections", lastId],
+    queryFn: () => getDeepfakeDetection(lastId as number),
+    enabled: lastId !== undefined,
+    retry: false,
+  });
+
+  const detect = useMutation({
+    mutationFn: createDeepfakeDetection,
+    onSuccess: async (created) => {
+      await pushRecentId(RECENT_DETECTIONS_KEY, created.detectionId);
+      await queryClient.invalidateQueries({ queryKey: recentIdsKey(RECENT_DETECTIONS_KEY) });
+      setImage(null);
+      router.push(`/detect/${created.detectionId}`);
+    },
+  });
+
+  const pending = detect.isPending;
+
+  return (
+    <Screen scroll>
+      <View className="gap-1">
+        <Text weight="bold" className="text-h3">
+          {t.title}
+        </Text>
+        <Text className="text-small text-gray-650">{t.description}</Text>
+      </View>
+
+      {last.data?.status === "PROCESSING" && lastId !== undefined ? (
+        <Card>
+          <Text weight="semibold">{t.resumeTitle}</Text>
+          <Text className="text-small text-gray-650">{t.resumeDescription}</Text>
+          <Button
+            title={t.resume}
+            variant="outline"
+            onPress={() => router.push(`/detect/${lastId}`)}
+          />
+        </Card>
+      ) : null}
+
+      <ImagePickerCard
+        image={image}
+        onPick={(picked) => {
+          detect.reset();
+          setImage(picked);
+        }}
+        disabled={pending}
+        maxBytes={MAX_IMAGE_BYTES}
+      />
+
+      {detect.isError ? (
+        <Card className="border-red-500 bg-red-50">
+          <Text weight="semibold" className="text-red-500">
+            {t.failed}
+          </Text>
+          <Text className="text-small text-gray-800">{detect.error.message}</Text>
+          {needsLogin(detect.error) ? (
+            <Button title={t.login} variant="outline" onPress={() => router.push("/login")} />
+          ) : null}
+        </Card>
+      ) : null}
+
+      <Button
+        title={pending ? t.uploading : t.start}
+        loading={pending}
+        disabled={!image}
+        onPress={() => image && detect.mutate(image)}
+      />
+
+      <Button title={t.history} variant="outline" onPress={() => router.push("/detect/history")} />
+    </Screen>
+  );
+}
