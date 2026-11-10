@@ -97,7 +97,7 @@ function FailureView({
   const messages = useMessages(assessmentMessages);
   // 얼굴이 없어 끝난 분석은 FAILED 대신 faceDetected=false로 올 수도 있다.
   const failure = data.failureReason
-    ? messages.failure[data.failureReason]
+    ? (messages.failure[data.failureReason] ?? messages.unknownFailure)
     : data.status === "FAILED"
       ? messages.unknownFailure
       : messages.failure.NO_FACE_DETECTED;
