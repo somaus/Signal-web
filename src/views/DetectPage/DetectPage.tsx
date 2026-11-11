@@ -92,7 +92,8 @@ function mapEvidenceHighlights(data: DeepfakeDetectionResponse, t: DetectText) {
       : t.evidenceFallbackTab(index + 1),
     description: evidence.description || t.evidenceNoDescription,
   }));
-  const highlights = [...provenanceHighlights, ...modelHighlights];
+  // 이미지에서 찾은 근거가 있으면 그것만 보여 준다. 파일 메타데이터 탭은 근거가 없을 때만 쓴다.
+  const highlights = modelHighlights.length > 0 ? modelHighlights : provenanceHighlights;
   return highlights.length > 0
     ? highlights
     : [{ tab: t.noEvidenceTab, description: t.noEvidenceDescription }];

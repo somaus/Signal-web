@@ -98,8 +98,8 @@ export const detectMessages = defineMessages(
         description: "이미지 파일에 AI 생성 도구로 만들었다는 기록이 남아 있습니다.",
       },
       AI_SOURCE_DECLARED: {
-        tab: "AI 생성 표시",
-        description: "이미지 파일에 AI로 생성한 콘텐츠라는 표시가 있습니다.",
+        tab: "생성형 AI 출처",
+        description: "이미지의 출처 정보를 분석한 결과, 생성형 AI로 만들어진 이미지로 확인되었습니다.",
       },
       AI_EDIT_DECLARED: {
         tab: "AI 편집 표시",
@@ -277,8 +277,8 @@ export const detectMessages = defineMessages(
             "The image file contains a record that it was made with an AI generation tool.",
         },
         AI_SOURCE_DECLARED: {
-          tab: "AI-generated label",
-          description: "The image file is labeled as AI-generated content.",
+          tab: "AI-generated source",
+          description: "Analysis of the image's source information shows it was created with generative AI.",
         },
         AI_EDIT_DECLARED: {
           tab: "AI edit label",
@@ -449,8 +449,8 @@ export const detectMessages = defineMessages(
           description: "画像ファイルにAI生成ツールで作成したという記録が残っています。",
         },
         AI_SOURCE_DECLARED: {
-          tab: "AI生成の表示",
-          description: "画像ファイルにAIで生成したコンテンツであるという表示があります。",
+          tab: "生成AIの出所",
+          description: "画像の出所情報を分析した結果、生成AIで作成された画像であることが確認されました。",
         },
         AI_EDIT_DECLARED: {
           tab: "AI編集の表示",
@@ -612,8 +612,8 @@ export const detectMessages = defineMessages(
           description: "图片文件中留有使用AI生成工具制作的记录。",
         },
         AI_SOURCE_DECLARED: {
-          tab: "AI生成标记",
-          description: "图片文件中带有AI生成内容的标记。",
+          tab: "生成式AI来源",
+          description: "分析图片的来源信息后，确认该图片由生成式AI制作。",
         },
         AI_EDIT_DECLARED: {
           tab: "AI编辑标记",
